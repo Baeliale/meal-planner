@@ -1,8 +1,10 @@
 name: Build and Attach APK
 
 on:
-  repository_dispatch:
-    types: [build-apk]
+  workflow_run:
+    workflows: ["Create Release"]
+    types:
+      - completed
 
 permissions:
   contents: write
@@ -10,9 +12,22 @@ permissions:
 jobs:
   build-and-attach:
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
+
+      - name: Get tag name
+        id: get_tag
+        run: |
+          TAG=$(git describe --tags --exact-match 2>/dev/null || echo "")
+          if [ -z "$TAG" ]; then
+            echo "No tag found, exiting"
+            exit 0
+          fi
+          echo "TAG=$TAG" >> $GITHUB_OUTPUT
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -35,7 +50,6 @@ jobs:
           BUILD_OUTPUT=$(npx eas-cli build --platform android --profile preview --non-interactive --json)
           echo "$BUILD_OUTPUT"
           
-          # Extract build ID
           BUILD_ID=$(echo "$BUILD_OUTPUT" | jq -r '.[0].id // .id')
           echo "BUILD_ID=$BUILD_ID" >> $GITHUB_OUTPUT
           echo "Build ID: $BUILD_ID"
@@ -62,7 +76,7 @@ jobs:
       - name: Download APK
         run: |
           BUILD_ID="${{ steps.build.outputs.BUILD_ID }}"
-          TAG="${{ github.event.client_payload.tag }}"
+          TAG="${{ steps.get_tag.outputs.TAG }}"
           
           DOWNLOAD_URL=$(npx eas-cli build:view $BUILD_ID --json | jq -r '.artifacts.buildUrl')
           echo "Download URL: $DOWNLOAD_URL"
@@ -73,7 +87,7 @@ jobs:
       - name: Upload APK to Release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ github.event.client_payload.tag }}
+          tag_name: ${{ steps.get_tag.outputs.TAG }}
           files: meal-planner-*.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -81,14 +95,14 @@ jobs:
       - name: Update Release Notes
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ github.event.client_payload.tag }}
+          tag_name: ${{ steps.get_tag.outputs.TAG }}
           body: |
             
             ---
             
             ## Installation (Android)
             
-            1. Download `meal-planner-${{ github.event.client_payload.tag }}.apk` below
+            1. Download `meal-planner-${{ steps.get_tag.outputs.TAG }}.apk` below
             2. Enable "Install from Unknown Sources" in your Android settings
             3. Open the APK file and install
             

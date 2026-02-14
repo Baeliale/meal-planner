@@ -41,14 +41,3 @@ jobs:
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  trigger-build:
-    needs: create-release
-    runs-on: ubuntu-latest
-    steps:
-      - name: Trigger Build Workflow
-        uses: peter-evans/repository-dispatch@v2
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          event-type: build-apk
-          client-payload: '{"tag": "${{ github.ref_name }}"}'
