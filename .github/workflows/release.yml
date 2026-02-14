@@ -1,43 +1,16 @@
-name: Build and Release Android
+name: Create Release
 
 on:
   push:
     tags:
       - 'v*.*.*'
 
+permissions:
+  contents: write
+
 jobs:
-  build-android:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'yarn'
-
-      - name: Setup Expo
-        uses: expo/expo-github-action@v8
-        with:
-          expo-version: latest
-          token: ${{ secrets.EXPO_TOKEN }}
-
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
-
-      - name: Build Android APK
-        run: npx eas-cli build --platform android --profile preview --non-interactive
-
-      - name: Download APK
-        run: |
-          echo "Build completed! Download APK from: https://expo.dev/accounts/$(npx eas-cli whoami)/projects/meal-planner/builds"
-
   create-release:
-    needs: build-android
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/')
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -63,8 +36,19 @@ jobs:
             
             ---
             
-            **Download APK:** Check the [Expo dashboard](https://expo.dev/) for the built APK file.
+            ⏳ APK is being built and will be attached shortly...
           draft: false
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  trigger-build:
+    needs: create-release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Build Workflow
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          event-type: build-apk
+          client-payload: '{"tag": "${{ github.ref_name }}"}'

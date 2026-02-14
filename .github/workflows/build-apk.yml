@@ -1,0 +1,98 @@
+name: Build and Attach APK
+
+on:
+  repository_dispatch:
+    types: [build-apk]
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-attach:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'yarn'
+
+      - name: Setup Expo
+        uses: expo/expo-github-action@v8
+        with:
+          expo-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Build Android APK
+        id: build
+        run: |
+          BUILD_OUTPUT=$(npx eas-cli build --platform android --profile preview --non-interactive --json)
+          echo "$BUILD_OUTPUT"
+          
+          # Extract build ID
+          BUILD_ID=$(echo "$BUILD_OUTPUT" | jq -r '.[0].id // .id')
+          echo "BUILD_ID=$BUILD_ID" >> $GITHUB_OUTPUT
+          echo "Build ID: $BUILD_ID"
+
+      - name: Wait for build to complete
+        run: |
+          BUILD_ID="${{ steps.build.outputs.BUILD_ID }}"
+          
+          for i in {1..60}; do
+            STATUS=$(npx eas-cli build:view $BUILD_ID --json | jq -r '.status')
+            echo "Build status: $STATUS (check $i/60)"
+          
+            if [ "$STATUS" = "FINISHED" ]; then
+              echo "✅ Build completed!"
+              break
+            elif [ "$STATUS" = "ERRORED" ] || [ "$STATUS" = "CANCELED" ]; then
+              echo "❌ Build failed: $STATUS"
+              exit 1
+            fi
+          
+            sleep 30
+          done
+
+      - name: Download APK
+        run: |
+          BUILD_ID="${{ steps.build.outputs.BUILD_ID }}"
+          TAG="${{ github.event.client_payload.tag }}"
+          
+          DOWNLOAD_URL=$(npx eas-cli build:view $BUILD_ID --json | jq -r '.artifacts.buildUrl')
+          echo "Download URL: $DOWNLOAD_URL"
+          
+          curl -L -o meal-planner-${TAG}.apk "$DOWNLOAD_URL"
+          ls -lh meal-planner-*.apk
+
+      - name: Upload APK to Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.event.client_payload.tag }}
+          files: meal-planner-*.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update Release Notes
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.event.client_payload.tag }}
+          body: |
+            
+            ---
+            
+            ## Installation (Android)
+            
+            1. Download `meal-planner-${{ github.event.client_payload.tag }}.apk` below
+            2. Enable "Install from Unknown Sources" in your Android settings
+            3. Open the APK file and install
+            
+            ✅ APK successfully attached!
+          append_body: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
