@@ -1,0 +1,70 @@
+name: Build and Release Android
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'yarn'
+
+      - name: Setup Expo
+        uses: expo/expo-github-action@v8
+        with:
+          expo-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Build Android APK
+        run: npx eas-cli build --platform android --profile preview --non-interactive
+
+      - name: Download APK
+        run: |
+          echo "Build completed! Download APK from: https://expo.dev/accounts/$(npx eas-cli whoami)/projects/meal-planner/builds"
+
+  create-release:
+    needs: build-android
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get version from tag
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Extract changelog for version
+        id: changelog
+        run: |
+          VERSION="${GITHUB_REF#refs/tags/}"
+          echo "NOTES<<EOF" >> $GITHUB_OUTPUT
+          awk "/## \[${VERSION#v}\]/{flag=1; next} /## \[/{flag=0} flag" CHANGELOG.md >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: Release ${{ steps.get_version.outputs.VERSION }}
+          body: |
+            ${{ steps.changelog.outputs.NOTES }}
+            
+            ---
+            
+            **Download APK:** Check the [Expo dashboard](https://expo.dev/) for the built APK file.
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
