@@ -1,20 +1,36 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { ThemeProvider } from './src/providers/ThemeProvider';
+import { RecipeProvider, useRecipes } from './src/providers/RecipeProvider';
+import { ShoppingListProvider, useShoppingList } from './src/providers/ShoppingListProvider';
+import { AlertProvider } from './src/providers/AlertProvider';
+import { Layout } from './src/components/layout/Layout';
+import { SnackbarProvider, useSnackbar } from "./src/providers/SnackbarProvider";
+import { useEffect } from "react";
+
+function ProviderConnector() {
+  const { showSnackbar } = useSnackbar();
+  const { setSnackbarCallback: setRecipeSnackbar } = useRecipes();
+  const { setSnackbarCallback: setShoppingSnackbar } = useShoppingList();
+
+  useEffect(() => {
+    setRecipeSnackbar(showSnackbar);
+    setShoppingSnackbar(showSnackbar);
+  }, [showSnackbar, setRecipeSnackbar, setShoppingSnackbar]);
+
+  return <Layout />;
+}
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+      <ThemeProvider>
+        <AlertProvider>
+          <SnackbarProvider>
+            <RecipeProvider>
+              <ShoppingListProvider>
+                <ProviderConnector />
+              </ShoppingListProvider>
+            </RecipeProvider>
+          </SnackbarProvider>
+        </AlertProvider>
+      </ThemeProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
