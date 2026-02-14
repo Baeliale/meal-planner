@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "recipe-planner",
-    "slug": "recipe-planner",
+    "name": "meal-planner",
+    "slug": "meal-planner",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -25,6 +25,11 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "b10144a4-2314-44cf-a232-05b653e429e3"
+      }
     }
   }
 }
