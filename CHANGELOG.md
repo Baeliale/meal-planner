@@ -5,7 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.0.0] - 2025-02-14
+## [1.0.3] - 2026-02-14
+
+### Changed
+- Converted both workflows to one big workflow because previous version didn't work as expected.
+
+## [1.0.2] - 2026-02-14
+
+### Changed
+- Changed the way the build-apk workflow gets triggered so progress of both workflows is visible on the commit with the release tag instead of only showing the progress of the create-release workflow.
+
+## [1.0.1] - 2026-02-14
+
+### Added
+- Added a new workflow to automate the apk build and add it to the release after a new release is created.
+
+## [1.0.0] - 2026-02-14
 
 ### Added
 - Recipe management (create, edit, delete, view)
