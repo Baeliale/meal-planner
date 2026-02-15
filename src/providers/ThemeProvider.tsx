@@ -9,6 +9,7 @@ interface ThemeContextType {
     theme: Theme;
     toggleTheme: () => void;
     styles: typeof lightStyles;
+    cls: (classes: string) => any;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);

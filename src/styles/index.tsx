@@ -52,8 +52,6 @@ export const styles = StyleSheet.create({
         maxHeight: '100%',
         width: '100%',
         color: colors.textPrimary.light,
-        hyphens: 'auto',
-        wordBreak: 'break-word',
     },
     topBar: {
         width: '100%',
