@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2026-02-15
+
+### Added
+- 🌍 Internationalization (i18n) support
+- English and Dutch language translations
+- Automatic language detection based on device settings
+- All UI elements, alerts, and messages now translatable
+
+### Changed
+- Updated all screens with translation support
+- Snackbar messages now use i18n
+- Alert dialogs now use i18n
+
+### Technical
+- Added i18next and react-i18next dependencies
+- Added expo-localization for device language detection
+- Created translation files for en and nl locales
+
 ## [1.0.4] - 2026-02-15
 
 ### Changed
