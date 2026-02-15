@@ -86,14 +86,10 @@ export const RecipeList = () => {
         setIngredients(ingredients.filter((_, i) => i !== index));
     };
 
-    const handleIngredientChange = (
-        index: number,
-        field: keyof Ingredient,
-        value: string | number | boolean | undefined
-    ) => {
+    const handleIngredientChange = (index: number, field: keyof Ingredient, value: string | number | boolean | undefined) => {
         const updated = [...ingredients];
         if (field === 'amount') {
-            updated[index][field] = value === '' ? undefined : Number(value);
+            updated[index][field] = value as any; // Temporarily allow string
         } else if (field === 'excludeFromShopping') {
             updated[index][field] = value as boolean;
         } else {
@@ -111,8 +107,13 @@ export const RecipeList = () => {
             return;
         }
 
-        // Filter out empty ingredients
-        const validIngredients = ingredients.filter(ing => ing.name.trim() !== '');
+        // Filter out empty ingredients and parse amounts
+        const validIngredients = ingredients
+            .filter(ing => ing.name.trim() !== '')
+            .map(ing => ({
+                ...ing,
+                amount: ing.amount ? parseFloat(String(ing.amount).replace(',', '.')) : undefined
+            }));
 
         await addRecipe({
             name: name.trim(),
@@ -329,39 +330,53 @@ export const RecipeList = () => {
                             {ingredients.map((ingredient, index) => (
                                 <View key={`add-ingredients-${index}`} style={cls('ingredientInputContainer')}>
                                     <View style={cls('ingredientInputRow')}>
-                                        <View style={{ flex: 2 }}>
-                                            <Input
-                                                placeholder="Ingredient name *"
-                                                value={ingredient.name}
-                                                onChangeText={value =>
-                                                    handleIngredientChange(index, 'name', value)
-                                                }
-                                                noMargin
-                                            />
-                                        </View>
-                                        <View style={{ flex: 1 }}>
+                                        {/* Left side - inputs and checkbox */}
+                                        <View style={{ flex: 1, gap: 8 }}>
+                                        {/* Row 1: Ingredient name (full width) */}
+                                        <Input
+                                            placeholder="Ingredient name *"
+                                            value={ingredient.name}
+                                            onChangeText={value => handleIngredientChange(index, 'name', value)}
+                                            noMargin
+                                        />
+                                        
+                                        {/* Row 2: Amount and Unit side by side */}
+                                        <View style={{ flexDirection: 'row', gap: 8 }}>
+                                            <View style={{ flex: 1 }}>
                                             <Input
                                                 placeholder="Amount"
                                                 value={ingredient.amount?.toString() || ''}
-                                                onChangeText={value =>
-                                                    handleIngredientChange(index, 'amount', value)
-                                                }
+                                                onChangeText={value => handleIngredientChange(index, 'amount', value)}
                                                 keyboardType="numeric"
                                                 noMargin
                                             />
-                                        </View>
-                                        <View style={{ flex: 1 }}>
+                                            </View>
+                                            <View style={{ flex: 1 }}>
                                             <Input
                                                 placeholder="Unit"
                                                 value={ingredient.unit || ''}
-                                                onChangeText={value =>
-                                                    handleIngredientChange(index, 'unit', value)
-                                                }
+                                                onChangeText={value => handleIngredientChange(index, 'unit', value)}
                                                 noMargin
                                             />
+                                            </View>
+                                        </View>
+                                        
+                                        {/* Row 3: Checkbox */}
+                                        <Checkbox
+                                            checked={ingredient.excludeFromShopping || false}
+                                            onToggle={() =>
+                                            handleIngredientChange(
+                                                index,
+                                                'excludeFromShopping',
+                                                !ingredient.excludeFromShopping
+                                            )
+                                            }
+                                            label="Exclude from shopping list"
+                                        />
                                         </View>
                                         <>
                                             {ingredients.length > 1 && (
+                                                <View style={{ position: 'relative', top: 27 }}>
                                                 <Button
                                                     variant="secondary"
                                                     type="icon"
@@ -371,20 +386,10 @@ export const RecipeList = () => {
                                                     iconSize={17}
                                                     onPress={() => handleRemoveIngredient(index)}
                                                 />
+                                                </View>
                                             )}
                                         </>
                                     </View>
-                                    <Checkbox
-                                        checked={ingredient.excludeFromShopping || false}
-                                        onToggle={() =>
-                                            handleIngredientChange(
-                                                index,
-                                                'excludeFromShopping',
-                                                !ingredient.excludeFromShopping
-                                            )
-                                        }
-                                        label="Exclude from shopping list"
-                                    />
                                 </View>
                             ))}
                         </>

@@ -6,6 +6,8 @@ import { useTheme } from '../../providers/ThemeProvider';
 interface SlideMenuProps {
     open: boolean;
     children: ReactNode;
+    setOpen: () => void;
+    slideWidth?: number;
 }
 
 export const SlideMenu = ({ open, setOpen, children, slideWidth }: SlideMenuProps) => {
