@@ -2,7 +2,7 @@
   "expo": {
     "name": "meal-planner",
     "slug": "meal-planner",
-    "version": "1.0.4",
+    "version": "2.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -31,6 +31,9 @@
       "eas": {
         "projectId": "b10144a4-2314-44cf-a232-05b653e429e3"
       }
-    }
+    },
+    "plugins": [
+      "expo-localization"
+    ]
   }
 }

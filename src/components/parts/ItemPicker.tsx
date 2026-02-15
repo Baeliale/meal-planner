@@ -1,6 +1,7 @@
 import { Pressable, ScrollView, View } from 'react-native';
 import { useTheme } from '../../providers/ThemeProvider';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FontAwesome } from '@expo/vector-icons';
 import { Text } from './Text';
 
@@ -19,6 +20,7 @@ export const ItemPicker = ({
     emptyLabel,
     label,
 }: ItemPickerProps) => {
+    const { t } = useTranslation();
     const { cls, theme } = useTheme();
     const [showDropdown, setShowDropdown] = useState(false);
 
@@ -29,7 +31,7 @@ export const ItemPicker = ({
                 style={cls('pickerButton input marginTop')}
                 onPress={() => setShowDropdown(prevState => !prevState)}
             >
-                <Text>{emptyLabel ?? 'Select an item...'}</Text>
+                <Text>{emptyLabel ?? t('common.selectItem')}</Text>
                 <FontAwesome
                     name={showDropdown ? 'chevron-up' : 'chevron-down'}
                     size={12}
@@ -44,8 +46,7 @@ export const ItemPicker = ({
                                 <Pressable
                                     key={item.value}
                                     style={cls(
-                                        'pickerItem',
-                                        item.value === selectedValue && 'pickerItemSelected'
+                                        `pickerItem${item.value === selectedValue ? ' pickerItemSelected' : ''}`
                                     )}
                                     onPress={() => onSelect(item.value)}
                                 >

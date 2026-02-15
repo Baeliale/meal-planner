@@ -1,3 +1,4 @@
+import './src/i18n';
 import { ThemeProvider } from './src/providers/ThemeProvider';
 import { RecipeProvider, useRecipes } from './src/providers/RecipeProvider';
 import { ShoppingListProvider, useShoppingList } from './src/providers/ShoppingListProvider';

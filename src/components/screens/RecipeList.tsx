@@ -1,5 +1,6 @@
 import { View } from 'react-native';
 import { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useRecipes, WeekDay } from '../../providers/RecipeProvider';
 import { useTheme } from '../../providers/ThemeProvider';
 import { Button } from '../parts/Button';
@@ -14,6 +15,7 @@ import { Text } from '../parts/Text';
 import { Checkbox } from '../parts/Checkbox';
 
 export const RecipeList = () => {
+    const { t } = useTranslation();
     const { cls } = useTheme();
     const { showAlert } = useAlert();
     const { recipes, addRecipe, removeRecipe, addRecipeToDay } = useRecipes();
@@ -86,7 +88,11 @@ export const RecipeList = () => {
         setIngredients(ingredients.filter((_, i) => i !== index));
     };
 
-    const handleIngredientChange = (index: number, field: keyof Ingredient, value: string | number | boolean | undefined) => {
+    const handleIngredientChange = (
+        index: number,
+        field: keyof Ingredient,
+        value: string | number | boolean | undefined
+    ) => {
         const updated = [...ingredients];
         if (field === 'amount') {
             updated[index][field] = value as any; // Temporarily allow string
@@ -101,8 +107,8 @@ export const RecipeList = () => {
     const handleSubmit = async () => {
         if (!name.trim()) {
             showAlert({
-                title: 'Error',
-                message: 'Recipe name is required',
+                title: t('alerts.error'),
+                message: t('alerts.recipeNameRequired'),
             });
             return;
         }
@@ -112,7 +118,7 @@ export const RecipeList = () => {
             .filter(ing => ing.name.trim() !== '')
             .map(ing => ({
                 ...ing,
-                amount: ing.amount ? parseFloat(String(ing.amount).replace(',', '.')) : undefined
+                amount: ing.amount ? parseFloat(String(ing.amount).replace(',', '.')) : undefined,
             }));
 
         await addRecipe({
@@ -151,15 +157,15 @@ export const RecipeList = () => {
         const recipeName = recipe ? recipe.name : 'this recipe';
 
         showAlert({
-            title: 'Delete Recipe',
-            message: `Are you sure you want to delete "${recipeName}"?`,
+            title: t('recipes.deleteRecipe'),
+            message: t('recipes.confirmDelete', { name: recipeName }),
             buttons: [
                 {
-                    text: 'Cancel',
+                    text: t('common.cancel'),
                     style: 'cancel',
                 },
                 {
-                    text: 'Delete',
+                    text: t('common.delete'),
                     style: 'destructive',
                     onPress: async () => {
                         await removeRecipe(recipeId);
@@ -194,15 +200,13 @@ export const RecipeList = () => {
         }
     };
 
-    const capitalize = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
-
     return (
         <View style={cls('container')}>
-            <Text style={cls('title')}>Recipe List</Text>
+            <Text style={cls('title')}>{t('recipes.title')}</Text>
 
             {/* Search Bar */}
             <Input
-                placeholder="Search recipes..."
+                placeholder={t('recipes.searchPlaceholder')}
                 value={searchQuery}
                 onChangeText={setSearchQuery}
                 style={{ marginBottom: 16 }}
@@ -215,8 +219,8 @@ export const RecipeList = () => {
                         <View style={cls('listEmpty')}>
                             <Text style={cls('listEmptyText')}>
                                 {searchQuery
-                                    ? 'No recipes found matching your search.'
-                                    : 'No recipes yet. Add one to get started!'}
+                                    ? t('recipes.noSearchResults')
+                                    : t('recipes.noRecipes')}
                             </Text>
                         </View>
                     ) : (
@@ -238,10 +242,10 @@ export const RecipeList = () => {
                                                                 'Select a day to add this dish to:'
                                                             }
                                                             items={weekDays.map(day => ({
-                                                                label: capitalize(day),
+                                                                label: t(`planning.${day}`),
                                                                 value: day,
                                                             }))}
-                                                            emptyLabel={'Select a day...'}
+                                                            emptyLabel={t('planning.selectDish')}
                                                             selectedValue={selectedDay}
                                                             onSelect={day => {
                                                                 if (day) {
@@ -254,7 +258,7 @@ export const RecipeList = () => {
                                                         />
                                                         <Button
                                                             variant="secondary"
-                                                            label="Cancel"
+                                                            label={t('common.cancel')}
                                                             onPress={() =>
                                                                 setSelectingDayForRecipe(null)
                                                             }
@@ -282,7 +286,7 @@ export const RecipeList = () => {
                                                             }
                                                         />
                                                         <Button
-                                                            label="View Dish"
+                                                            label={t('recipes.viewRecipe')}
                                                             variant="primary"
                                                             type="icon"
                                                             iconName="visibility"
@@ -290,7 +294,7 @@ export const RecipeList = () => {
                                                             onPress={() => handleViewRecipe(recipe)}
                                                         />
                                                         <Button
-                                                            label="Clear Dish"
+                                                            label={t('recipes.deleteRecipe')}
                                                             variant="secondary"
                                                             type="icon"
                                                             iconName="delete"
@@ -315,77 +319,96 @@ export const RecipeList = () => {
             <>
                 {showForm && (
                     <View style={cls('form')}>
-                        <Text style={cls('subTitle')}>Add New Recipe</Text>
+                        <Text style={cls('subTitle')}>{t('recipes.addRecipe')}</Text>
 
                         <Input
-                            label="Recipe Name"
-                            placeholder="Recipe Name *"
+                            label={t('recipes.recipeName')}
+                            placeholder={`${t('recipes.recipeName')} *`}
                             value={name}
                             onChangeText={setName}
                             style={cls('marginTop')}
                         />
 
-                        <Text style={cls('label')}>Ingredients</Text>
+                        <Text style={cls('label')}>{t('recipes.ingredients')}</Text>
                         <>
                             {ingredients.map((ingredient, index) => (
-                                <View key={`add-ingredients-${index}`} style={cls('ingredientInputContainer')}>
+                                <View
+                                    key={`add-ingredients-${index}`}
+                                    style={cls('ingredientInputContainer')}
+                                >
                                     <View style={cls('ingredientInputRow')}>
                                         {/* Left side - inputs and checkbox */}
                                         <View style={{ flex: 1, gap: 8 }}>
-                                        {/* Row 1: Ingredient name (full width) */}
-                                        <Input
-                                            placeholder="Ingredient name *"
-                                            value={ingredient.name}
-                                            onChangeText={value => handleIngredientChange(index, 'name', value)}
-                                            noMargin
-                                        />
-                                        
-                                        {/* Row 2: Amount and Unit side by side */}
-                                        <View style={{ flexDirection: 'row', gap: 8 }}>
-                                            <View style={{ flex: 1 }}>
+                                            {/* Row 1: Ingredient name (full width) */}
                                             <Input
-                                                placeholder="Amount"
-                                                value={ingredient.amount?.toString() || ''}
-                                                onChangeText={value => handleIngredientChange(index, 'amount', value)}
-                                                keyboardType="numeric"
+                                                placeholder={`${t('recipes.ingredientName')} *`}
+                                                value={ingredient.name}
+                                                onChangeText={value =>
+                                                    handleIngredientChange(index, 'name', value)
+                                                }
                                                 noMargin
                                             />
+
+                                            {/* Row 2: Amount and Unit side by side */}
+                                            <View style={{ flexDirection: 'row', gap: 8 }}>
+                                                <View style={{ flex: 1 }}>
+                                                    <Input
+                                                        placeholder={t('recipes.amount')}
+                                                        value={ingredient.amount?.toString() || ''}
+                                                        onChangeText={value =>
+                                                            handleIngredientChange(
+                                                                index,
+                                                                'amount',
+                                                                value
+                                                            )
+                                                        }
+                                                        keyboardType="numeric"
+                                                        noMargin
+                                                    />
+                                                </View>
+                                                <View style={{ flex: 1 }}>
+                                                    <Input
+                                                        placeholder={t('recipes.unit')}
+                                                        value={ingredient.unit || ''}
+                                                        onChangeText={value =>
+                                                            handleIngredientChange(
+                                                                index,
+                                                                'unit',
+                                                                value
+                                                            )
+                                                        }
+                                                        noMargin
+                                                    />
+                                                </View>
                                             </View>
-                                            <View style={{ flex: 1 }}>
-                                            <Input
-                                                placeholder="Unit"
-                                                value={ingredient.unit || ''}
-                                                onChangeText={value => handleIngredientChange(index, 'unit', value)}
-                                                noMargin
+
+                                            {/* Row 3: Checkbox */}
+                                            <Checkbox
+                                                checked={ingredient.excludeFromShopping || false}
+                                                onToggle={() =>
+                                                    handleIngredientChange(
+                                                        index,
+                                                        'excludeFromShopping',
+                                                        !ingredient.excludeFromShopping
+                                                    )
+                                                }
+                                                label={t('recipes.excludeFromShopping')}
                                             />
-                                            </View>
-                                        </View>
-                                        
-                                        {/* Row 3: Checkbox */}
-                                        <Checkbox
-                                            checked={ingredient.excludeFromShopping || false}
-                                            onToggle={() =>
-                                            handleIngredientChange(
-                                                index,
-                                                'excludeFromShopping',
-                                                !ingredient.excludeFromShopping
-                                            )
-                                            }
-                                            label="Exclude from shopping list"
-                                        />
                                         </View>
                                         <>
                                             {ingredients.length > 1 && (
                                                 <View style={{ position: 'relative', top: 27 }}>
-                                                <Button
-                                                    variant="secondary"
-                                                    type="icon"
-                                                    label="Remove"
-                                                    iconSource="materialIcons"
-                                                    iconName="remove-circle"
-                                                    iconSize={17}
-                                                    onPress={() => handleRemoveIngredient(index)}
-                                                />
+                                                    <Button
+                                                        variant="secondary"
+                                                        type="icon"
+                                                        label="Remove"
+                                                        iconSource="materialIcons"
+                                                        iconName="remove-circle"
+                                                        iconSize={17}
+                                                        onPress={() =>
+                                                            handleRemoveIngredient(index)
+                                                        }
+                                                    />
                                                 </View>
                                             )}
                                         </>
@@ -394,7 +417,7 @@ export const RecipeList = () => {
                             ))}
                         </>
                         <Button
-                            label="Add Ingredient"
+                            label={t('recipes.addIngredient')}
                             variant="primary"
                             type="text"
                             onPress={handleAddIngredient}
@@ -402,22 +425,22 @@ export const RecipeList = () => {
                         />
 
                         <Input
-                            label="Instructions"
+                            label={t('recipes.instructions')}
                             type="textarea"
-                            placeholder="Instructions"
+                            placeholder={t('recipes.instructions')}
                             value={instructions}
                             onChangeText={setInstructions}
                         />
 
                         <View style={cls('rows')}>
                             <Button
-                                label="Cancel"
+                                label={t('common.cancel')}
                                 variant="secondary"
                                 type="text"
                                 onPress={handleCancel}
                             />
                             <Button
-                                label="Add Recipe"
+                                label={t('recipes.addRecipe')}
                                 variant="primary"
                                 type="text"
                                 onPress={handleSubmit}
@@ -430,7 +453,7 @@ export const RecipeList = () => {
             {/* Toggle Button */}
             <View>
                 <Button
-                    label={showForm ? 'Close Form' : 'Add Recipe'}
+                    label={showForm ? t('recipes.closeForm') : t('recipes.addRecipe')}
                     variant={showForm ? 'secondary' : 'primary'}
                     type="text"
                     onPress={() => setShowForm(!showForm)}

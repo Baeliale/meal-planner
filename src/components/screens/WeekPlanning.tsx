@@ -1,6 +1,7 @@
 import { View } from 'react-native';
 import { useRecipes, WeekDay } from '../../providers/RecipeProvider';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../providers/ThemeProvider';
 import { Button } from '../parts/Button';
 import { ListItem } from '../parts/ListItem';
@@ -11,6 +12,7 @@ import { useShoppingList } from '../../providers/ShoppingListProvider';
 import { useSnackbar } from '../../providers/SnackbarProvider';
 
 export const WeekPlanning = () => {
+    const { t } = useTranslation();
     const { cls } = useTheme();
     const { showAlert } = useAlert();
     const {
@@ -54,15 +56,18 @@ export const WeekPlanning = () => {
         const assignedRecipe = getRecipeForDay(day);
 
         showAlert({
-            title: 'Delete Recipe',
-            message: `Are you sure you want to remove "${assignedRecipe?.name}" from ${day}?`,
+            title: t('recipes.deleteRecipe'),
+            message: t('planning.confirmRemoveRecipe', { 
+                name: assignedRecipe?.name, 
+                day: t(`planning.${day}`) 
+            }),
             buttons: [
                 {
-                    text: 'Cancel',
+                    text: t('common.cancel'),
                     style: 'cancel',
                 },
                 {
-                    text: 'Remove',
+                    text: t('common.delete'),
                     style: 'destructive',
                     onPress: async () => {
                         await removeRecipeFromDay(day);
@@ -74,15 +79,15 @@ export const WeekPlanning = () => {
 
     const handleClearWeek = () => {
         showAlert({
-            title: 'Clear Week Planning',
-            message: 'Are you sure you want to clear the entire week planning?',
+            title: t('planning.clearWeek'),
+            message: t('planning.confirmClearWeek'),
             buttons: [
                 {
-                    text: 'Cancel',
+                    text: t('common.cancel'),
                     style: 'cancel',
                 },
                 {
-                    text: 'Clear',
+                    text: t('common.delete'),
                     style: 'destructive',
                     onPress: async () => {
                         await clearWeekPlanning();
@@ -95,16 +100,15 @@ export const WeekPlanning = () => {
     const handleGenerateShoppingList = () => {
         if (shoppingList.length > 0) {
             showAlert({
-                title: 'Generate Shopping List',
-                message:
-                    'Generating a new shopping list will overwrite your existing one. Do you want to continue?',
+                title: t('planning.generateList'),
+                message: t('planning.generateConfirm'),
                 buttons: [
                     {
-                        text: 'Cancel',
+                        text: t('common.cancel'),
                         style: 'cancel',
                     },
                     {
-                        text: 'Generate',
+                        text: t('shopping.generate'),
                         style: 'default',
                         onPress: () => {
                             generateShoppingList();
@@ -117,16 +121,14 @@ export const WeekPlanning = () => {
         }
     };
 
-    const capitalize = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
-
     return (
         <>
             <View style={cls('header')}>
-                <Text style={cls('title')}>Week Planning</Text>
+                <Text style={cls('title')}>{t('planning.title')}</Text>
                 <View style={cls('rows')}>
                     <Button
                         variant="primary"
-                        label="Generate List"
+                        label={t('planning.generateList')}
                         type="icon"
                         iconSource="fontAwesome"
                         iconName="shopping-cart"
@@ -134,7 +136,7 @@ export const WeekPlanning = () => {
                     />
                     <Button
                         variant="secondary"
-                        label="Clear All"
+                        label={t('planning.clearAll')}
                         type="icon"
                         iconSource="materialIcons"
                         iconName="delete-sweep"
@@ -150,7 +152,7 @@ export const WeekPlanning = () => {
                     return (
                         <ListItem key={day}>
                             <View style={cls('columns')}>
-                                <Text style={cls('subTitle')}>{capitalize(day)}</Text>
+                                <Text style={cls('subTitle')}>{t(`planning.${day}`)}</Text>
                                 <>
                                     {assignedRecipe && (
                                         <Text style={cls('listItemText')}>
@@ -164,7 +166,7 @@ export const WeekPlanning = () => {
                                             <ItemPicker
                                                 label={
                                                     'Select dish to assign to ' +
-                                                    capitalize(day) +
+                                                    t(`planning.${day}`) +
                                                     '...'
                                                 }
                                                 items={recipes.map(recipe => ({
@@ -177,11 +179,11 @@ export const WeekPlanning = () => {
                                                         handleSelectRecipe(day, recipeId);
                                                     }
                                                 }}
-                                                emptyLabel={'Select a dish...'}
+                                                emptyLabel={t('planning.selectDish')}
                                             />
                                             <Button
                                                 variant={'secondary'}
-                                                label={'Cancel'}
+                                                label={t('common.cancel')}
                                                 onPress={() => setSelectedDay(null)}
                                             />
                                         </View>
@@ -195,7 +197,7 @@ export const WeekPlanning = () => {
                                         <>
                                             {assignedRecipe ? (
                                                 <Button
-                                                    label={'Clear Dish'}
+                                                    label={t('planning.clearDish')}
                                                     variant={'secondary'}
                                                     type={'icon'}
                                                     iconSource={'materialIcons'}
@@ -204,7 +206,7 @@ export const WeekPlanning = () => {
                                                 />
                                             ) : (
                                                 <Button
-                                                    label={'Set Dish'}
+                                                    label={t('planning.setDish')}
                                                     variant={'primary'}
                                                     type={'icon'}
                                                     iconSource={'materialIcons'}

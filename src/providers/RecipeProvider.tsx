@@ -1,11 +1,10 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useTranslation } from 'react-i18next';
 import { Recipe, Planning } from '../types';
 
 export type WeekDay = keyof Planning;
 
-// Add this import at the top - we'll need to access the snackbar
-// We'll use a callback pattern to avoid circular dependencies
 type SnackbarCallback = (options: {
     message: string;
     type: 'success' | 'error' | 'notification';
@@ -56,6 +55,7 @@ export const useRecipes = (): RecipeContextType => {
 };
 
 export const RecipeProvider: React.FC<RecipeProviderProps> = ({ children }) => {
+    const { t } = useTranslation();
     const [recipes, setRecipes] = useState<Recipe[]>([]);
     const [weekPlanning, setWeekPlanning] = useState<Planning>(defaultPlanning);
     const [isLoading, setIsLoading] = useState(true);
@@ -89,7 +89,7 @@ export const RecipeProvider: React.FC<RecipeProviderProps> = ({ children }) => {
             } catch (error) {
                 console.error('Error loading data from AsyncStorage:', error);
                 showSnackbar({
-                    message: 'Failed to load recipes',
+                    message: t('messages.failedToLoad'),
                     type: 'error',
                 });
             } finally {
@@ -132,14 +132,14 @@ export const RecipeProvider: React.FC<RecipeProviderProps> = ({ children }) => {
             await saveRecipes(updatedRecipes);
 
             showSnackbar({
-                message: `"${newRecipe.name}" added successfully!`,
+                message: t('messages.recipeAdded', { name: newRecipe.name }),
                 type: 'success',
             });
 
             return newRecipe;
         } catch (error) {
             showSnackbar({
-                message: 'Failed to add recipe',
+                message: t('messages.failedToAdd'),
                 type: 'error',
             });
             throw error;
@@ -162,14 +162,14 @@ export const RecipeProvider: React.FC<RecipeProviderProps> = ({ children }) => {
             await saveRecipes(updatedRecipes);
 
             showSnackbar({
-                message: `"${recipe.name}" updated successfully!`,
+                message: t('messages.recipeUpdated', { name: recipe.name }),
                 type: 'success',
             });
 
             return recipe;
         } catch (error) {
             showSnackbar({
-                message: 'Failed to update recipe',
+                message: t('messages.failedToUpdate'),
                 type: 'error',
             });
             throw error;
@@ -180,7 +180,7 @@ export const RecipeProvider: React.FC<RecipeProviderProps> = ({ children }) => {
     const removeRecipe = async (recipeId: string): Promise<void> => {
         try {
             const recipe = recipes.find(r => r.id === recipeId);
-            const recipeName = recipe?.name || 'Recipe';
+            const recipeName = recipe?.name || t('common.recipe');
 
             const updatedRecipes = recipes.filter(recipe => recipe.id !== recipeId);
             setRecipes(updatedRecipes);
@@ -202,12 +202,12 @@ export const RecipeProvider: React.FC<RecipeProviderProps> = ({ children }) => {
             }
 
             showSnackbar({
-                message: `"${recipeName}" deleted`,
+                message: t('messages.recipeDeleted', { name: recipeName }),
                 type: 'success',
             });
         } catch (error) {
             showSnackbar({
-                message: 'Failed to delete recipe',
+                message: t('messages.failedToDelete'),
                 type: 'error',
             });
             throw error;
@@ -224,12 +224,15 @@ export const RecipeProvider: React.FC<RecipeProviderProps> = ({ children }) => {
             await savePlanning(updatedPlanning);
 
             showSnackbar({
-                message: `"${recipe.name}" added to ${day}`,
+                message: t('messages.recipeAddedToDay', { 
+                    name: recipe.name, 
+                    day: t(`planning.${day}`) 
+                }),
                 type: 'success',
             });
         } catch (error) {
             showSnackbar({
-                message: 'Failed to add recipe to day',
+                message: t('messages.failedToAddToDay'),
                 type: 'error',
             });
             throw error;
@@ -246,12 +249,12 @@ export const RecipeProvider: React.FC<RecipeProviderProps> = ({ children }) => {
             await savePlanning(updatedPlanning);
 
             showSnackbar({
-                message: `Removed from ${day}`,
+                message: t('messages.removedFromDay', { day: t(`planning.${day}`) }),
                 type: 'success',
             });
         } catch (error) {
             showSnackbar({
-                message: 'Failed to remove recipe',
+                message: t('messages.failedToRemove'),
                 type: 'error',
             });
             throw error;
@@ -265,12 +268,12 @@ export const RecipeProvider: React.FC<RecipeProviderProps> = ({ children }) => {
             await savePlanning(defaultPlanning);
 
             showSnackbar({
-                message: 'Week planning cleared',
+                message: t('messages.weekCleared'),
                 type: 'success',
             });
         } catch (error) {
             showSnackbar({
-                message: 'Failed to clear week planning',
+                message: t('messages.failedToClear'),
                 type: 'error',
             });
             throw error;

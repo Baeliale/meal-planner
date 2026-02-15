@@ -1,6 +1,7 @@
 import { Pressable, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { FontAwesome } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../providers/ThemeProvider';
 import { colors } from '../../styles';
 import { Screen } from './Layout';
@@ -12,13 +13,14 @@ export const ToolBar = ({
     activeView: string;
     setActiveView: (value: ((prevState: Screen) => Screen) | Screen) => void;
 }) => {
+    const { t } = useTranslation();
     const { cls, theme, toggleTheme } = useTheme();
-
-    const toolBarStyles = view =>
+    
+    const toolBarStyles = (view: Screen | string) =>
         cls(`toolBarButton ${activeView === view ? 'toolBarButtonActive' : ''}`);
-
-    const iconColor = colors.textPrimary.light
-
+    
+    const iconColor = colors.textPrimary.light;
+    
     return (
         <LinearGradient colors={[colors.primary, colors.primaryDark]} style={cls('toolBar')}>
             <Pressable onPress={() => setActiveView('planning')} style={toolBarStyles('planning')}>
@@ -26,7 +28,7 @@ export const ToolBar = ({
                     name={'calendar'}
                     size={24}
                     color={iconColor}
-                    accessibilityLargeContentTitle={'Planning'}
+                    accessibilityLabel={t('screens.weekPlanning')}
                 />
             </Pressable>
             <Pressable onPress={() => setActiveView('recipes')} style={toolBarStyles('recipes')}>
@@ -34,7 +36,7 @@ export const ToolBar = ({
                     name={'book'}
                     size={24}
                     color={iconColor}
-                    accessibilityLargeContentTitle={'Recipes'}
+                    accessibilityLabel={t('screens.recipeList')}
                 />
             </Pressable>
             <Pressable
@@ -47,7 +49,7 @@ export const ToolBar = ({
                     name="shopping-cart"
                     size={24}
                     color={iconColor}
-                    accessibilityLargeContentTitle={'Shopping list'}
+                    accessibilityLabel={t('screens.shoppingList')}
                 />
             </Pressable>
             <Pressable onPress={() => toggleTheme()} style={toolBarStyles('theme')}>
@@ -56,7 +58,7 @@ export const ToolBar = ({
                         name={theme === 'light' ? 'moon-o' : 'sun-o'}
                         size={24}
                         color={iconColor}
-                        accessibilityLargeContentTitle={'Toggle dark/light mode'}
+                        accessibilityLabel={theme === 'light' ? t('common.darkMode') : t('common.lightMode')}
                     />
                 </View>
             </Pressable>
