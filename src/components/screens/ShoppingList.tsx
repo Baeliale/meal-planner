@@ -1,5 +1,6 @@
 import { View, ScrollView } from 'react-native';
 import { useTheme } from '../../providers/ThemeProvider';
+import { useTranslation } from 'react-i18next';
 import { useShoppingList } from '../../providers/ShoppingListProvider';
 import { useAlert } from '../../providers/AlertProvider';
 import { Button } from '../parts/Button';
@@ -12,6 +13,7 @@ import { ShoppingListItem } from '../../types';
 import { SlideMenu } from '../parts/SlideMenu';
 
 export const ShoppingList = () => {
+    const { t } = useTranslation();
     const { cls } = useTheme();
     const { showAlert } = useAlert();
     const {
@@ -40,8 +42,8 @@ export const ShoppingList = () => {
     const handleAddItem = async () => {
         if (!newItemName.trim()) {
             showAlert({
-                title: 'Error',
-                message: 'Item name is required',
+                title: t('alerts.error'),
+                message: t('alerts.itemNameRequired'),
             });
             return;
         }
@@ -77,8 +79,8 @@ export const ShoppingList = () => {
     const handleSaveEdit = async (itemId: string) => {
         if (!editName.trim()) {
             showAlert({
-                title: 'Error',
-                message: 'Item name is required',
+                title: t('alerts.error'),
+                message: t('alerts.itemNameRequired'),
             });
             return;
         }
@@ -105,12 +107,12 @@ export const ShoppingList = () => {
 
     const handleDeleteItem = (itemId: string, itemName: string) => {
         showAlert({
-            title: 'Delete Item',
-            message: `Remove "${itemName}" from shopping list?`,
+            title: t('common.delete'),
+            message: t('shopping.confirmDelete', { name: itemName }),
             buttons: [
-                { text: 'Cancel', style: 'cancel' },
+                { text: t('common.cancel'), style: 'cancel' },
                 {
-                    text: 'Delete',
+                    text: t('common.delete'),
                     style: 'destructive',
                     onPress: () => removeShoppingListItem(itemId),
                 },
@@ -120,12 +122,12 @@ export const ShoppingList = () => {
 
     const handleClearList = () => {
         showAlert({
-            title: 'Clear Shopping List',
-            message: 'Are you sure you want to clear the entire shopping list?',
+            title: t('shopping.clearAll'),
+            message: t('shopping.confirmClear'),
             buttons: [
-                { text: 'Cancel', style: 'cancel' },
+                { text: t('common.cancel'), style: 'cancel' },
                 {
-                    text: 'Clear',
+                    text: t('common.delete'),
                     style: 'destructive',
                     onPress: clearShoppingList,
                 },
@@ -136,12 +138,12 @@ export const ShoppingList = () => {
     const handleGenerateList = () => {
         if (shoppingList.length > 0) {
             showAlert({
-                title: 'Generate Shopping List',
-                message: 'This will replace your current shopping list. Continue?',
+                title: t('shopping.generate'),
+                message: t('shopping.confirmGenerate'),
                 buttons: [
-                    { text: 'Cancel', style: 'cancel' },
+                    { text: t('common.cancel'), style: 'cancel' },
                     {
-                        text: 'Generate',
+                        text: t('shopping.generate'),
                         style: 'default',
                         onPress: generateShoppingList,
                     },
@@ -184,11 +186,11 @@ export const ShoppingList = () => {
     return (
         <View style={cls('container')}>
             <View style={cls('header')}>
-                <Text style={cls('title')}>Shopping List</Text>
+                <Text style={cls('title')}>{t('shopping.title')}</Text>
                 <View style={cls('rows')}>
                     <Button
                         variant="primary"
-                        label="Generate"
+                        label={t('shopping.generate')}
                         type="icon"
                         iconSource="materialIcons"
                         iconName="auto-awesome"
@@ -198,7 +200,7 @@ export const ShoppingList = () => {
                         {shoppingList.length > 0 && (
                             <Button
                                 variant="secondary"
-                                label="Clear All"
+                                label={t('shopping.clearAll')}
                                 type="icon"
                                 iconSource="materialIcons"
                                 iconName="delete-sweep"
@@ -214,10 +216,7 @@ export const ShoppingList = () => {
                 <>
                     {shoppingList.length === 0 && !showAddForm && (
                         <View style={cls('listEmpty')}>
-                            <Text style={cls('listEmptyText')}>
-                                No items in your shopping list. Generate from your week planning or
-                                add items manually.
-                            </Text>
+                            <Text style={cls('listEmptyText')}>{t('shopping.noItems')}</Text>
                         </View>
                     )}
                 </>
@@ -235,14 +234,14 @@ export const ShoppingList = () => {
                                             <View style={cls('ingredientInputRow')}>
                                                 <View style={{ flex: 2 }}>
                                                     <Input
-                                                        placeholder="Item name *"
+                                                        placeholder={`${t('shopping.itemName')} *`}
                                                         value={editName}
                                                         onChangeText={setEditName}
                                                     />
                                                 </View>
                                                 <View style={{ flex: 1 }}>
                                                     <Input
-                                                        placeholder="Amount"
+                                                        placeholder={t('recipes.amount')}
                                                         value={editAmount}
                                                         onChangeText={setEditAmount}
                                                         keyboardType="numeric"
@@ -250,7 +249,7 @@ export const ShoppingList = () => {
                                                 </View>
                                                 <View style={{ flex: 1 }}>
                                                     <Input
-                                                        placeholder="Unit"
+                                                        placeholder={t('recipes.unit')}
                                                         value={editUnit}
                                                         onChangeText={setEditUnit}
                                                     />
@@ -258,13 +257,13 @@ export const ShoppingList = () => {
                                             </View>
                                             <View style={cls('rows')}>
                                                 <Button
-                                                    label="Cancel"
+                                                    label={t('common.cancel')}
                                                     variant="secondary"
                                                     type="text"
                                                     onPress={handleCancelEdit}
                                                 />
                                                 <Button
-                                                    label="Save"
+                                                    label={t('common.save')}
                                                     variant="primary"
                                                     type="text"
                                                     onPress={() => handleSaveEdit(item.id)}
@@ -293,7 +292,7 @@ export const ShoppingList = () => {
                                                 <Button
                                                     variant="primary"
                                                     type="icon"
-                                                    label="Edit"
+                                                    label={t('common.edit')}
                                                     iconSource="materialIcons"
                                                     iconName="edit"
                                                     onPress={() => handleStartEdit(item)}
@@ -301,7 +300,7 @@ export const ShoppingList = () => {
                                                 <Button
                                                     variant="secondary"
                                                     type="icon"
-                                                    label="Delete"
+                                                    label={t('common.delete')}
                                                     iconSource="materialIcons"
                                                     iconName="delete"
                                                     onPress={() =>
@@ -321,7 +320,7 @@ export const ShoppingList = () => {
                 <>
                     {checkedItems.length > 0 && (
                         <View style={{ marginTop: 20 }}>
-                            <Text style={cls('subTitle')}>Checked Items</Text>
+                            <Text style={cls('subTitle')}>{t('shopping.checkedItems')}</Text>
                             <>
                                 {checkedItems.map(item => (
                                     <ListItem key={item.id} style={{ opacity: 0.5 }}>
@@ -345,19 +344,19 @@ export const ShoppingList = () => {
                 <>
                     {showAddForm && (
                         <View style={cls('form')}>
-                            <Text style={cls('subTitle')}>Add Item</Text>
+                            <Text style={cls('subTitle')}>{t('shopping.addItem')}</Text>
 
                             <View style={cls('ingredientInputRow')}>
                                 <View style={{ flex: 2 }}>
                                     <Input
-                                        placeholder="Item name *"
+                                        placeholder={`${t('shopping.itemName')} *`}
                                         value={newItemName}
                                         onChangeText={setNewItemName}
                                     />
                                 </View>
                                 <View style={{ flex: 1 }}>
                                     <Input
-                                        placeholder="Amount"
+                                        placeholder={t('recipes.amount')}
                                         value={newItemAmount}
                                         onChangeText={setNewItemAmount}
                                         keyboardType="numeric"
@@ -365,7 +364,7 @@ export const ShoppingList = () => {
                                 </View>
                                 <View style={{ flex: 1 }}>
                                     <Input
-                                        placeholder="Unit"
+                                        placeholder={t('recipes.unit')}
                                         value={newItemUnit}
                                         onChangeText={setNewItemUnit}
                                     />
@@ -374,13 +373,13 @@ export const ShoppingList = () => {
 
                             <View style={cls('rows')}>
                                 <Button
-                                    label="Cancel"
+                                    label={t('common.cancel')}
                                     variant="secondary"
                                     type="text"
                                     onPress={handleCancelAdd}
                                 />
                                 <Button
-                                    label="Add Item"
+                                    label={t('shopping.addItem')}
                                     variant="primary"
                                     type="text"
                                     onPress={handleAddItem}
@@ -394,7 +393,7 @@ export const ShoppingList = () => {
             {/* Add Item Button */}
             <View>
                 <Button
-                    label={showAddForm ? 'Close Form' : 'Add Item'}
+                    label={showAddForm ? t('shopping.closeForm') : t('shopping.addItem')}
                     variant={showAddForm ? 'secondary' : 'primary'}
                     type="text"
                     onPress={() => setShowAddForm(!showAddForm)}

@@ -77,6 +77,7 @@ export const styles = StyleSheet.create({
     },
     logo: {
         height: 30,
+        maxWidth: 200,
         resizeMode: 'contain',
     },
     title: {
@@ -341,7 +342,6 @@ export const styles = StyleSheet.create({
         flexDirection: 'row',
         gap: 8,
         alignItems: 'flex-start',
-        flexWrap: 'wrap',
     },
     ingredientInputContainer: {
         flexDirection: 'column',
@@ -406,6 +406,14 @@ export const styles = StyleSheet.create({
         color: '#fff',
         fontWeight: 'bold',
     },
+    languageSwitcher: {
+        position: 'absolute',
+        bottom: 10,
+        right: 20,
+    },
+    languageButton: {
+        padding: 4,
+    }
 });
 
 export const darkStyles = StyleSheet.create({

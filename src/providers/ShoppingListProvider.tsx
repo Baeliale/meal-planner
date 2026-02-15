@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useTranslation } from 'react-i18next';
 import { ShoppingListItem } from '../types';
 import { useRecipes } from './RecipeProvider';
 
@@ -37,6 +38,7 @@ export const useShoppingList = (): ShoppingListContextType => {
 };
 
 export const ShoppingListProvider: React.FC<ShoppingListProviderProps> = ({ children }) => {
+    const { t } = useTranslation();
     const { weekPlanning, getRecipeById } = useRecipes();
     const [shoppingList, setShoppingList] = useState<ShoppingListItem[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -62,7 +64,7 @@ export const ShoppingListProvider: React.FC<ShoppingListProviderProps> = ({ chil
             } catch (error) {
                 console.error('Error loading shopping list from AsyncStorage:', error);
                 showSnackbar({
-                    message: 'Failed to load shopping list',
+                    message: t('messages.failedToLoadShopping'),
                     type: 'error',
                 });
             } finally {
@@ -148,12 +150,12 @@ export const ShoppingListProvider: React.FC<ShoppingListProviderProps> = ({ chil
             saveShoppingList(newShoppingList);
 
             showSnackbar({
-                message: 'Shopping list generated from week planning!',
+                message: t('messages.shoppingListGenerated'),
                 type: 'success',
             });
         } catch (error) {
             showSnackbar({
-                message: 'Failed to generate shopping list',
+                message: t('messages.failedToGenerate'),
                 type: 'error',
             });
         }
@@ -171,12 +173,12 @@ export const ShoppingListProvider: React.FC<ShoppingListProviderProps> = ({ chil
             await saveShoppingList(updatedList);
 
             showSnackbar({
-                message: `"${item.name}" added to shopping list`,
+                message: t('messages.itemAdded', { name: item.name }),
                 type: 'success',
             });
         } catch (error) {
             showSnackbar({
-                message: 'Failed to add item',
+                message: t('messages.failedToAdd'),
                 type: 'error',
             });
             throw error;
@@ -192,12 +194,12 @@ export const ShoppingListProvider: React.FC<ShoppingListProviderProps> = ({ chil
             await saveShoppingList(updatedList);
 
             showSnackbar({
-                message: `"${item?.name}" removed`,
+                message: t('messages.itemRemoved', { name: item?.name }),
                 type: 'success',
             });
         } catch (error) {
             showSnackbar({
-                message: 'Failed to remove item',
+                message: t('messages.failedToRemove'),
                 type: 'error',
             });
             throw error;
@@ -216,7 +218,7 @@ export const ShoppingListProvider: React.FC<ShoppingListProviderProps> = ({ chil
             // No snackbar for toggle - too noisy for frequent action
         } catch (error) {
             showSnackbar({
-                message: 'Failed to update item',
+                message: t('messages.failedToUpdate'),
                 type: 'error',
             });
             throw error;
@@ -233,12 +235,12 @@ export const ShoppingListProvider: React.FC<ShoppingListProviderProps> = ({ chil
             await saveShoppingList(updatedList);
 
             showSnackbar({
-                message: `"${editedItem.name}" updated`,
+                message: t('messages.itemUpdated', { name: editedItem.name }),
                 type: 'success',
             });
         } catch (error) {
             showSnackbar({
-                message: 'Failed to update item',
+                message: t('messages.failedToUpdate'),
                 type: 'error',
             });
             throw error;
@@ -252,15 +254,14 @@ export const ShoppingListProvider: React.FC<ShoppingListProviderProps> = ({ chil
             await saveShoppingList([]);
 
             showSnackbar({
-                message: 'Shopping list cleared',
+                message: t('messages.shoppingListCleared'),
                 type: 'success',
             });
         } catch (error) {
             showSnackbar({
-                message: 'Failed to clear shopping list',
+                message: t('messages.failedToClear'),
                 type: 'error',
             });
-            throw error;
         }
     };
 

@@ -15,15 +15,15 @@ interface ButtonProps {
 }
 
 export const Button = ({
-                           variant,
-                           type = 'text',
-                           label,
-                           iconSource,
-                           iconName,
-                           iconSize,
-                           onPress,
-                           style,
-                       }: ButtonProps) => {
+    variant,
+    type = 'text',
+    label,
+    iconSource,
+    iconName,
+    iconSize,
+    onPress,
+    style,
+}: ButtonProps) => {
     const { cls, theme } = useTheme();
 
     const buttonClass = () => {
@@ -61,7 +61,9 @@ export const Button = ({
             ? theme === 'light'
                 ? colors.textPrimary.light
                 : colors.textPrimary.dark
-            : variant === 'primary' ? colors.textPrimary.light : colors.textPrimary.dark
+            : variant === 'primary'
+              ? colors.textPrimary.light
+              : colors.textPrimary.dark;
 
     iconSize = iconSize ?? 24;
 
@@ -70,6 +72,7 @@ export const Button = ({
             case 'materialIcons':
                 return (
                     <MaterialIcons
+                         // @ts-ignore
                         name={iconName ?? 'add'}
                         size={iconSize}
                         color={iconColor}
@@ -79,6 +82,7 @@ export const Button = ({
             case 'fontAwesome':
                 return (
                     <FontAwesome
+                        // @ts-ignore
                         name={iconName ?? 'plus'}
                         size={iconSize}
                         color={iconColor}
@@ -88,6 +92,7 @@ export const Button = ({
             default:
                 return (
                     <FontAwesome
+                        // @ts-ignore
                         name={iconName ?? 'plus'}
                         size={iconSize}
                         color={iconColor}

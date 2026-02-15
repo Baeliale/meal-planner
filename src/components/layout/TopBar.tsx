@@ -1,5 +1,6 @@
-import { Image, Text, View } from 'react-native';
+import { Image, View } from 'react-native';
 import { useTheme } from '../../providers/ThemeProvider';
+import { LanguageSwitcher } from '../parts/LanguageSwitcher';
 import logo from '../../../assets/logo.png';
 
 export const TopBar = () => {
@@ -12,6 +13,7 @@ export const TopBar = () => {
                 source={logo}
                 accessibilityLargeContentTitle={'Meal Planner'}
             />
+            <LanguageSwitcher />
         </View>
     );
 };

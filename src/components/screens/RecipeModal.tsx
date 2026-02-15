@@ -4,6 +4,7 @@ import { useTheme } from '../../providers/ThemeProvider';
 import { Button } from '../parts/Button';
 import { Input } from '../parts/Input';
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useRecipes } from '../../providers/RecipeProvider';
 import { Text } from '../parts/Text';
 import { Checkbox } from '../parts/Checkbox';
@@ -16,6 +17,7 @@ interface RecipeModalProps {
 }
 
 export const RecipeModal = ({ recipe, visible, onClose }: RecipeModalProps) => {
+    const { t } = useTranslation();
     const { cls } = useTheme();
     const { showAlert } = useAlert();
     const { editRecipe, getRecipeById } = useRecipes();
@@ -53,7 +55,11 @@ export const RecipeModal = ({ recipe, visible, onClose }: RecipeModalProps) => {
         setIngredients(ingredients.filter((_, i) => i !== index));
     };
 
-    const handleIngredientChange = (index: number, field: keyof Ingredient, value: string | number | boolean | undefined) => {
+    const handleIngredientChange = (
+        index: number,
+        field: keyof Ingredient,
+        value: string | number | boolean | undefined
+    ) => {
         const updated = [...ingredients];
         if (field === 'amount') {
             // Store as-is (string), don't parse yet
@@ -69,8 +75,8 @@ export const RecipeModal = ({ recipe, visible, onClose }: RecipeModalProps) => {
     const handleSave = async () => {
         if (!name.trim()) {
             showAlert({
-                title: 'Error',
-                message: 'Recipe name is required',
+                title: t('alerts.error'),
+                message: t('alerts.recipeNameRequired'),
             });
             return;
         }
@@ -82,7 +88,7 @@ export const RecipeModal = ({ recipe, visible, onClose }: RecipeModalProps) => {
             .filter(ing => ing.name.trim() !== '')
             .map(ing => ({
                 ...ing,
-                amount: ing.amount ? parseFloat(String(ing.amount).replace(',', '.')) : undefined
+                amount: ing.amount ? parseFloat(String(ing.amount).replace(',', '.')) : undefined,
             }));
 
         await editRecipe({
@@ -145,7 +151,7 @@ export const RecipeModal = ({ recipe, visible, onClose }: RecipeModalProps) => {
                     {/* Header */}
                     <View style={cls('modalHeader')}>
                         <Text style={cls('title')}>
-                            {isEditing ? 'Edit Recipe' : currentRecipe.name}
+                            {isEditing ? t('recipes.editRecipe') : currentRecipe.name}
                         </Text>
                         <View style={cls('modalHeaderButtons')}>
                             <>
@@ -153,7 +159,7 @@ export const RecipeModal = ({ recipe, visible, onClose }: RecipeModalProps) => {
                                     <Button
                                         variant="transparent"
                                         type="icon"
-                                        label="Edit Recipe"
+                                        label={t('common.edit')}
                                         iconSource="materialIcons"
                                         iconName="edit"
                                         onPress={() => setIsEditing(true)}
@@ -163,7 +169,7 @@ export const RecipeModal = ({ recipe, visible, onClose }: RecipeModalProps) => {
                             <Button
                                 variant="transparent"
                                 type="icon"
-                                label="Close Modal"
+                                label={t('common.close')}
                                 iconSource="materialIcons"
                                 iconName="close"
                                 onPress={handleClose}
@@ -177,82 +183,116 @@ export const RecipeModal = ({ recipe, visible, onClose }: RecipeModalProps) => {
                             {isEditing ? (
                                 /* Edit Form */
                                 <View>
-                                    <Text style={cls('label marginTop')}>Recipe Name</Text>
+                                    <Text style={cls('label marginTop')}>
+                                        {t('recipes.recipeName')}
+                                    </Text>
                                     <Input
-                                        placeholder="Recipe Name *"
+                                        placeholder={`${t('recipes.recipeName')} *`}
                                         value={name}
                                         onChangeText={setName}
                                     />
 
-                                    <Text style={cls('label')}>Ingredients</Text>
+                                    <Text style={cls('label')}>{t('recipes.ingredients')}</Text>
                                     <>
                                         {ingredients.map((ingredient, index) => (
-                                            <View key={`edit-ingredients-${index}`} style={cls('ingredientInputContainer')}>
+                                            <View
+                                                key={`edit-ingredients-${index}`}
+                                                style={cls('ingredientInputContainer')}
+                                            >
                                                 <View style={cls('ingredientInputRow')}>
                                                     {/* Left side - inputs and checkbox */}
                                                     <View style={{ flex: 1, gap: 8 }}>
-                                                    {/* Row 1: Ingredient name (full width) */}
-                                                    <Input
-                                                        placeholder="Ingredient name *"
-                                                        value={ingredient.name}
-                                                        onChangeText={value =>
-                                                        handleIngredientChange(index, 'name', value)
-                                                        }
-                                                        noMargin
-                                                    />
-                                                    
-                                                    {/* Row 2: Amount and Unit side by side */}
-                                                    <View style={{ flexDirection: 'row', gap: 8 }}>
-                                                        <View style={{ flex: 1 }}>
+                                                        {/* Row 1: Ingredient name (full width) */}
                                                         <Input
-                                                            placeholder="Amount"
-                                                            value={ingredient.amount?.toString() || ''}
+                                                            placeholder={`${t('recipes.ingredientName')} *`}
+                                                            value={ingredient.name}
                                                             onChangeText={value =>
-                                                            handleIngredientChange(index, 'amount', value)
-                                                            }
-                                                            keyboardType="numeric"
-                                                            noMargin
-                                                        />
-                                                        </View>
-                                                        <View style={{ flex: 1 }}>
-                                                        <Input
-                                                            placeholder="Unit"
-                                                            value={ingredient.unit || ''}
-                                                            onChangeText={value =>
-                                                            handleIngredientChange(index, 'unit', value)
+                                                                handleIngredientChange(
+                                                                    index,
+                                                                    'name',
+                                                                    value
+                                                                )
                                                             }
                                                             noMargin
                                                         />
+
+                                                        {/* Row 2: Amount and Unit side by side */}
+                                                        <View
+                                                            style={{ flexDirection: 'row', gap: 8 }}
+                                                        >
+                                                            <View style={{ flex: 1 }}>
+                                                                <Input
+                                                                    placeholder={t('recipes.amount')}
+                                                                    value={
+                                                                        ingredient.amount?.toString() ||
+                                                                        ''
+                                                                    }
+                                                                    onChangeText={value =>
+                                                                        handleIngredientChange(
+                                                                            index,
+                                                                            'amount',
+                                                                            value
+                                                                        )
+                                                                    }
+                                                                    keyboardType="numeric"
+                                                                    noMargin
+                                                                />
+                                                            </View>
+                                                            <View style={{ flex: 1 }}>
+                                                                <Input
+                                                                    placeholder={t('recipes.unit')}
+                                                                    value={ingredient.unit || ''}
+                                                                    onChangeText={value =>
+                                                                        handleIngredientChange(
+                                                                            index,
+                                                                            'unit',
+                                                                            value
+                                                                        )
+                                                                    }
+                                                                    noMargin
+                                                                />
+                                                            </View>
                                                         </View>
+
+                                                        {/* Row 3: Checkbox */}
+                                                        <Checkbox
+                                                            checked={
+                                                                ingredient.excludeFromShopping ||
+                                                                false
+                                                            }
+                                                            onToggle={() =>
+                                                                handleIngredientChange(
+                                                                    index,
+                                                                    'excludeFromShopping',
+                                                                    !ingredient.excludeFromShopping
+                                                                )
+                                                            }
+                                                            label={t('recipes.excludeFromShopping')}
+                                                        />
                                                     </View>
-                                                    
-                                                    {/* Row 3: Checkbox */}
-                                                    <Checkbox
-                                                        checked={ingredient.excludeFromShopping || false}
-                                                        onToggle={() =>
-                                                        handleIngredientChange(
-                                                            index,
-                                                            'excludeFromShopping',
-                                                            !ingredient.excludeFromShopping
-                                                        )
-                                                        }
-                                                        label="Exclude from shopping list"
-                                                    />
-                                                    </View>
-                                                    
+
                                                     {/* Right side - remove button */}
                                                     <>
                                                         {ingredients.length > 1 && (
-                                                            <View style={{ position: 'relative', top: 27 }}>
-                                                            <Button
-                                                                variant="secondary"
-                                                                type="icon"
-                                                                label="Remove"
-                                                                iconSource="materialIcons"
-                                                                iconName="remove-circle"
-                                                                iconSize={17}
-                                                                onPress={() => handleRemoveIngredient(index)}
-                                                            />
+                                                            <View
+                                                                style={{
+                                                                    position: 'relative',
+                                                                    top: 27,
+                                                                }}
+                                                            >
+                                                                <Button
+                                                                    variant="secondary"
+                                                                    type="icon"
+                                                                    label="Remove"
+                                                                    iconSource="materialIcons"
+                                                                    iconName="remove-circle"
+                                                                    iconSize={17}
+                                                                    onPress={() =>
+                                                                        handleRemoveIngredient(
+                                                                            index
+                                                                        )
+                                                                    }
+                                                                />
                                                             </View>
                                                         )}
                                                     </>
@@ -261,7 +301,7 @@ export const RecipeModal = ({ recipe, visible, onClose }: RecipeModalProps) => {
                                         ))}
                                     </>
                                     <Button
-                                        label="Add Ingredient"
+                                        label={t('recipes.addIngredient')}
                                         variant="primary"
                                         type="text"
                                         onPress={handleAddIngredient}
@@ -269,22 +309,22 @@ export const RecipeModal = ({ recipe, visible, onClose }: RecipeModalProps) => {
                                     />
 
                                     <Input
-                                        label="Instructions"
+                                        label={t('recipes.instructions')}
                                         type="textarea"
-                                        placeholder="Instructions"
+                                        placeholder={t('recipes.instructions')}
                                         value={instructions}
                                         onChangeText={setInstructions}
                                     />
 
                                     <View style={cls('rows')}>
                                         <Button
-                                            label="Cancel"
+                                            label={t('common.cancel')}
                                             variant="secondary"
                                             type="text"
                                             onPress={handleCancel}
                                         />
                                         <Button
-                                            label="Save Changes"
+                                            label={t('recipes.saveChanges')}
                                             variant="primary"
                                             type="text"
                                             onPress={handleSave}
@@ -299,7 +339,9 @@ export const RecipeModal = ({ recipe, visible, onClose }: RecipeModalProps) => {
                                         {currentRecipe.ingredients &&
                                             currentRecipe.ingredients.length > 0 && (
                                                 <View style={cls('modalSection')}>
-                                                    <Text style={cls('subTitle')}>Ingredients</Text>
+                                                    <Text style={cls('subTitle')}>
+                                                        {t('recipes.ingredients')}
+                                                    </Text>
                                                     <>
                                                         {currentRecipe.ingredients.map(
                                                             (ingredient, index) => (
@@ -320,7 +362,9 @@ export const RecipeModal = ({ recipe, visible, onClose }: RecipeModalProps) => {
                                     <>
                                         {currentRecipe.instructions && (
                                             <View style={cls('modalSection')}>
-                                                <Text style={cls('subTitle')}>Instructions</Text>
+                                                <Text style={cls('subTitle')}>
+                                                    {t('recipes.instructions')}
+                                                </Text>
                                                 <Text style={cls('modalText')}>
                                                     {currentRecipe.instructions}
                                                 </Text>
