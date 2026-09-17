@@ -14,7 +14,9 @@
         "recipe": "Recipe",
         "moreActions": "More actions",
         "remove": "Remove",
-        "ok": "OK"
+        "ok": "OK",
+        "updateAvailable": "Update {{version}} is available - tap to view",
+        "dismiss": "Dismiss"
     },
     "screens": {
         "recipeList": "Recipe List",

@@ -413,6 +413,27 @@ export const styles = StyleSheet.create({
     },
     languageButton: {
         padding: 4,
+    },
+    updateNotice: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        backgroundColor: colors.notification,
+        paddingVertical: 10,
+        paddingHorizontal: 16,
+        gap: 12,
+    },
+    updateNoticeContent: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        flex: 1,
+        gap: 10,
+    },
+    updateNoticeText: {
+        color: '#fff',
+        flex: 1,
+        fontSize: 14,
+        fontWeight: 'bold',
     }
 });
 

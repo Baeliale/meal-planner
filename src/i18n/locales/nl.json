@@ -14,7 +14,9 @@
         "recipe": "Recept",
         "moreActions": "Meer acties",
         "remove": "Verwijderen",
-        "ok": "OK"
+        "ok": "OK",
+        "updateAvailable": "Update {{version}} is beschikbaar - tik om te bekijken",
+        "dismiss": "Sluiten"
     },
     "screens": {
         "recipeList": "Receptenlijst",
