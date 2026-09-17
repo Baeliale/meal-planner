@@ -154,7 +154,7 @@ export const RecipeList = () => {
 
     const handleDeleteRecipe = async (recipeId: string) => {
         const recipe = recipes.find(r => r.id === recipeId);
-        const recipeName = recipe ? recipe.name : 'this recipe';
+        const recipeName = recipe ? recipe.name : t('common.recipe');
 
         showAlert({
             title: t('recipes.deleteRecipe'),
@@ -238,14 +238,12 @@ export const RecipeList = () => {
                                                 {isSelectingDay && (
                                                     <View style={cls('pickerContainer')}>
                                                         <ItemPicker
-                                                            label={
-                                                                'Select a day to add this dish to:'
-                                                            }
+                                                            label={t('recipes.selectDayForDish')}
                                                             items={weekDays.map(day => ({
                                                                 label: t(`planning.${day}`),
                                                                 value: day,
                                                             }))}
-                                                            emptyLabel={t('planning.selectDish')}
+                                                            emptyLabel={t('planning.selectDay')}
                                                             selectedValue={selectedDay}
                                                             onSelect={day => {
                                                                 if (day) {
@@ -276,7 +274,7 @@ export const RecipeList = () => {
                                                         setOpen={() => toggleItemMenu(recipe.id)}
                                                     >
                                                         <Button
-                                                            label="Add to weekday"
+                                                            label={t('recipes.addToWeekday')}
                                                             variant="primary"
                                                             type="icon"
                                                             iconName="edit-calendar"
@@ -401,7 +399,7 @@ export const RecipeList = () => {
                                                     <Button
                                                         variant="secondary"
                                                         type="icon"
-                                                        label="Remove"
+                                                        label={t('common.remove')}
                                                         iconSource="materialIcons"
                                                         iconName="remove-circle"
                                                         iconSize={17}

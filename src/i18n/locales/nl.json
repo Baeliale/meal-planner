@@ -11,7 +11,10 @@
         "selectItem": "Selecteer een item...",
         "darkMode": "Donkere modus",
         "lightMode": "Lichte modus",
-        "recipe": "Recept"
+        "recipe": "Recept",
+        "moreActions": "Meer acties",
+        "remove": "Verwijderen",
+        "ok": "OK"
     },
     "screens": {
         "recipeList": "Receptenlijst",
@@ -37,7 +40,9 @@
         "noSearchResults": "Geen recepten gevonden die overeenkomen met je zoekopdracht.",
         "confirmDelete": "Weet je zeker dat je \"{{name}}\" wilt verwijderen?",
         "saveChanges": "Wijzigingen Opslaan",
-        "closeForm": "Formulier Sluiten"
+        "closeForm": "Formulier Sluiten",
+        "addToWeekday": "Toevoegen aan dag",
+        "selectDayForDish": "Selecteer een dag om dit gerecht aan toe te voegen:"
     },
     "planning": {
         "title": "Weekplanning",
@@ -47,6 +52,8 @@
         "setDish": "Gerecht Instellen",
         "clearDish": "Gerecht Wissen",
         "selectDish": "Selecteer een gerecht...",
+        "selectDay": "Selecteer een dag...",
+        "selectDishForDay": "Selecteer een gerecht om toe te voegen aan {{day}}...",
         "monday": "Maandag",
         "tuesday": "Dinsdag",
         "wednesday": "Woensdag",

@@ -89,7 +89,7 @@ export const ShoppingListProvider: React.FC<ShoppingListProviderProps> = ({ chil
         try {
             const ingredientMap = new Map<
                 string,
-                { amount: number; unit?: string; count: number }
+                { name: string; amount: number; unit?: string; count: number }
             >();
 
             // Collect all ingredients from the week
@@ -115,6 +115,7 @@ export const ShoppingListProvider: React.FC<ShoppingListProviderProps> = ({ chil
                             }
                         } else {
                             ingredientMap.set(key, {
+                                name: ingredient.name,
                                 amount: ingredient.amount || 0,
                                 unit: ingredient.unit,
                                 count: ingredient.amount !== undefined ? 0 : 1,
@@ -125,9 +126,8 @@ export const ShoppingListProvider: React.FC<ShoppingListProviderProps> = ({ chil
             });
 
             // Convert to shopping list items
-            const newShoppingList: ShoppingListItem[] = Array.from(ingredientMap.entries()).map(
-                ([key, data]) => {
-                    const name = key.split('-')[0];
+            const newShoppingList: ShoppingListItem[] = Array.from(ingredientMap.values()).map(
+                data => {
                     let displayAmount: number | undefined = undefined;
 
                     if (data.count > 0) {
@@ -138,7 +138,7 @@ export const ShoppingListProvider: React.FC<ShoppingListProviderProps> = ({ chil
 
                     return {
                         id: `shopping-${Date.now()}-${Math.random()}`,
-                        name,
+                        name: data.name,
                         amount: displayAmount,
                         unit: data.unit,
                         checked: false,

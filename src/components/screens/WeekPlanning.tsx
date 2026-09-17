@@ -164,11 +164,9 @@ export const WeekPlanning = () => {
                                     {isSelectingForThisDay && (
                                         <View style={cls('pickerContainer')}>
                                             <ItemPicker
-                                                label={
-                                                    'Select dish to assign to ' +
-                                                    t(`planning.${day}`) +
-                                                    '...'
-                                                }
+                                                label={t('planning.selectDishForDay', {
+                                                    day: t(`planning.${day}`),
+                                                })}
                                                 items={recipes.map(recipe => ({
                                                     label: recipe.name,
                                                     value: recipe.id,

@@ -1,4 +1,5 @@
 import { Modal, View, Text, Pressable } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../providers/ThemeProvider';
 import { Button } from './Button';
 
@@ -20,10 +21,12 @@ export const AlertModal = ({
     visible,
     title,
     message,
-    buttons = [{ text: 'OK', style: 'default' }],
+    buttons,
     onClose,
 }: AlertModalProps) => {
+    const { t } = useTranslation();
     const { cls } = useTheme();
+    const resolvedButtons = buttons ?? [{ text: t('common.ok'), style: 'default' }];
 
     const handleButtonPress = (button: AlertButton) => {
         onClose();
@@ -45,7 +48,7 @@ export const AlertModal = ({
                             <Button
                                 variant="transparent"
                                 type="icon"
-                                label="Close Modal"
+                                label={t('common.close')}
                                 iconSource="materialIcons"
                                 iconName="close"
                                 onPress={onClose}
@@ -66,7 +69,7 @@ export const AlertModal = ({
                     <View style={{ padding: 20, paddingTop: 0 }}>
                         <View style={cls('rows')}>
                             <>
-                                {buttons?.map((button, index) => {
+                                {resolvedButtons.map((button, index) => {
                                     let variant: 'primary' | 'secondary' = 'primary';
 
                                     if (button.style === 'cancel') {

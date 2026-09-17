@@ -1,4 +1,4 @@
-import { Pressable, View } from 'react-native';
+import { Pressable } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { FontAwesome } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
@@ -53,14 +53,12 @@ export const ToolBar = ({
                 />
             </Pressable>
             <Pressable onPress={() => toggleTheme()} style={toolBarStyles('theme')}>
-                <View style={cls('toolBarButtonBackground')}>
-                    <FontAwesome
-                        name={theme === 'light' ? 'moon-o' : 'sun-o'}
-                        size={24}
-                        color={iconColor}
-                        accessibilityLabel={theme === 'light' ? t('common.darkMode') : t('common.lightMode')}
-                    />
-                </View>
+                <FontAwesome
+                    name={theme === 'light' ? 'moon-o' : 'sun-o'}
+                    size={24}
+                    color={iconColor}
+                    accessibilityLabel={theme === 'light' ? t('common.darkMode') : t('common.lightMode')}
+                />
             </Pressable>
         </LinearGradient>
     );

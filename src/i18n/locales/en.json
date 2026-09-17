@@ -11,7 +11,10 @@
         "selectItem": "Select an item...",
         "darkMode": "Dark mode",
         "lightMode": "Light mode",
-        "recipe": "Recipe"
+        "recipe": "Recipe",
+        "moreActions": "More actions",
+        "remove": "Remove",
+        "ok": "OK"
     },
     "screens": {
         "recipeList": "Recipe List",
@@ -37,7 +40,9 @@
         "noSearchResults": "No recipes found matching your search.",
         "confirmDelete": "Are you sure you want to delete \"{{name}}\"?",
         "saveChanges": "Save Changes",
-        "closeForm": "Close Form"
+        "closeForm": "Close Form",
+        "addToWeekday": "Add to weekday",
+        "selectDayForDish": "Select a day to add this dish to:"
     },
     "planning": {
         "title": "Week Planning",
@@ -47,6 +52,8 @@
         "setDish": "Set Dish",
         "clearDish": "Clear Dish",
         "selectDish": "Select a dish...",
+        "selectDay": "Select a day...",
+        "selectDishForDay": "Select dish to assign to {{day}}...",
         "monday": "Monday",
         "tuesday": "Tuesday",
         "wednesday": "Wednesday",

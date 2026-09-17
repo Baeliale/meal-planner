@@ -1,5 +1,5 @@
 import { Animated, Pressable } from 'react-native';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Text } from './Text';
 import { useTheme } from '../../providers/ThemeProvider';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -29,9 +29,12 @@ export const Snackbar = ({
     const { cls } = useTheme();
     const fadeAnim = useRef(new Animated.Value(0)).current;
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const [shouldRender, setShouldRender] = useState(visible);
 
     useEffect(() => {
         if (visible) {
+            setShouldRender(true);
+
             // Fade in
             Animated.timing(fadeAnim, {
                 toValue: 1,
@@ -42,15 +45,17 @@ export const Snackbar = ({
             // Auto-dismiss after duration
             // @ts-ignore
             timeoutRef.current = setTimeout(() => {
-                handleDismiss();
+                onDismiss();
             }, duration);
         } else {
-            // Fade out
+            // Fade out, then unmount once the animation actually finishes
             Animated.timing(fadeAnim, {
                 toValue: 0,
                 duration: 200,
                 useNativeDriver: true,
-            }).start();
+            }).start(() => {
+                setShouldRender(false);
+            });
         }
 
         return () => {
@@ -62,13 +67,7 @@ export const Snackbar = ({
     }, [visible]);
 
     const handleDismiss = () => {
-        Animated.timing(fadeAnim, {
-            toValue: 0,
-            duration: 200,
-            useNativeDriver: true,
-        }).start(() => {
-            onDismiss();
-        });
+        onDismiss();
     };
 
     const getIcon = () => {
@@ -95,8 +94,7 @@ export const Snackbar = ({
         }
     };
 
-    // @ts-ignore
-    if (!visible && fadeAnim._value === 0) {
+    if (!shouldRender) {
         return null;
     }
 

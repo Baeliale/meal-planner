@@ -27,24 +27,19 @@ export const useTheme = (): ThemeContextType => {
 };
 
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
-    const [theme, setTheme] = useState<Theme>('light');
-    const [isLoading, setIsLoading] = useState(true);
     const preferredColorScheme = Appearance.getColorScheme();
+    const [theme, setTheme] = useState<Theme>(preferredColorScheme === 'dark' ? 'dark' : 'light');
+    const [isLoading, setIsLoading] = useState(true);
 
-    useEffect(() => {
-        if (preferredColorScheme && !theme) {
-            setTheme(preferredColorScheme === 'dark' ? 'dark' : 'light');
-        }
-    }, [theme, preferredColorScheme]);
-
-    // Load initial data from AsyncStorage
+    // Load initial data from AsyncStorage, falling back to the OS preference
+    // (already set as the initial state) when nothing has been saved yet.
     useEffect(() => {
         const loadData = async () => {
             try {
                 const storedTheme = await AsyncStorage.getItem('@theme');
 
                 if (storedTheme) {
-                    setTheme(JSON.parse(storedTheme ?? 'light'));
+                    setTheme(JSON.parse(storedTheme));
                 }
             } catch (error) {
                 console.error('Error loading data from AsyncStorage:', error);

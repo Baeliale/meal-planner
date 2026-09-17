@@ -283,7 +283,7 @@ export const RecipeModal = ({ recipe, visible, onClose }: RecipeModalProps) => {
                                                                 <Button
                                                                     variant="secondary"
                                                                     type="icon"
-                                                                    label="Remove"
+                                                                    label={t('common.remove')}
                                                                     iconSource="materialIcons"
                                                                     iconName="remove-circle"
                                                                     iconSize={17}
