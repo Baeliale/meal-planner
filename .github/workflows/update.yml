@@ -1,0 +1,42 @@
+name: Publish OTA Update
+
+# Pushes a JS/asset-only update to installed builds on the "preview" channel
+# (the channel the release.yml workflow's APK builds are tagged with).
+# This is for bugfixes and small features that don't touch native code -
+# no rebuild, no reinstall, the app just picks it up on next launch.
+#
+# Anything that touches native code (new native dependencies, permissions,
+# Expo SDK upgrades, app.json plugin changes, etc.) still needs a full
+# native build - bump "version" in app.json and cut a release tag as usual.
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  publish-update:
+    name: Publish update to EAS
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'yarn'
+
+      - name: Setup Expo
+        uses: expo/expo-github-action@v8
+        with:
+          expo-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Publish update
+        run: |
+          MESSAGE=$(git log -1 --pretty=%s)
+          npx eas-cli update --branch preview --message "$MESSAGE" --non-interactive

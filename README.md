@@ -30,6 +30,22 @@ yarn ios
 yarn android
 ```
 
+## Releasing
+
+There are two release paths, both driven from GitHub Actions:
+
+- **Native build** (`.github/workflows/release.yml`) - triggered by pushing a
+  version tag (`vX.Y.Z`). Builds a full Android APK via EAS and attaches it
+  to a GitHub release. Use this whenever native code changes: new native
+  dependencies, permissions, Expo SDK upgrades, or `app.json` plugin changes.
+  Bump `version` in `app.json` first so the update channel below stays
+  correctly scoped to this build.
+- **OTA update** (`.github/workflows/update.yml`) - triggered automatically
+  on every push to `main`. Publishes the current JS/assets to the `preview`
+  update channel via `eas update`, so already-installed apps pick up the
+  change the next time they're opened - no rebuild, no reinstall. Use this
+  for regular bugfixes and small features that don't touch native code.
+
 ## Tech Stack
 
 - React Native + Expo
