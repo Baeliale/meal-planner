@@ -5,6 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2026-09-18
+
+### Added
+- OTA updates via EAS Update - bugfixes and small features can now be
+  pushed to installed apps without a full rebuild/reinstall
+- In-app notice that checks GitHub for a newer native release and
+  links to it when one is available
+
+### Fixed
+- Snackbar could silently block taps on whatever it overlapped after
+  being dismissed, making nearby buttons unresponsive
+- Shopping list truncated ingredient names containing a hyphen (e.g.
+  "low-fat milk" showed up as "low")
+- Recipe action menu's opening animation could cause a quick tap to
+  land on the wrong button
+- Dark mode wasn't applied automatically from the device's system
+  preference on first load
+- Several UI strings (day/dish pickers, action menu and alert labels)
+  weren't translated in Dutch
+
+### Technical
+- Added expo-updates and expo-application dependencies
+- Added a GitHub Actions workflow that publishes an OTA update on
+  every push to main
+
 ## [2.0.0] - 2026-02-15
 
 ### Added
