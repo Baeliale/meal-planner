@@ -8,12 +8,15 @@ export const TopBar = () => {
 
     return (
         <View style={cls('topBar')}>
+            <View style={cls('topBarSide')} />
             <Image
                 style={cls('logo')}
                 source={logo}
                 accessibilityLargeContentTitle={'Meal Planner'}
             />
-            <LanguageSwitcher />
+            <View style={cls('topBarSide')}>
+                <LanguageSwitcher />
+            </View>
         </View>
     );
 };

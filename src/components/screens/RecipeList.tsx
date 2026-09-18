@@ -243,14 +243,20 @@ export const RecipeList = () => {
                                         <View style={cls('columns')}>
                                             <>
                                                 {isSelectingDay ? (
-                                                    <Text style={cls('subTitle')}>
+                                                    <Text
+                                                        style={cls('subTitle')}
+                                                        numberOfLines={1}
+                                                    >
                                                         {recipe.name}
                                                     </Text>
                                                 ) : (
                                                     <Pressable
                                                         onPress={() => handleViewRecipe(recipe)}
                                                     >
-                                                        <Text style={cls('subTitle')}>
+                                                        <Text
+                                                            style={cls('subTitle')}
+                                                            numberOfLines={1}
+                                                        >
                                                             {recipe.name}
                                                         </Text>
                                                     </Pressable>

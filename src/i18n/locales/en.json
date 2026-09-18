@@ -88,6 +88,9 @@
         "recipeNameRequired": "Recipe name is required",
         "itemNameRequired": "Item name is required"
     },
+    "changelog": {
+        "title": "What's New"
+    },
     "messages": {
         "recipeAdded": "\"{{name}}\" added successfully!",
         "recipeUpdated": "\"{{name}}\" updated successfully!",

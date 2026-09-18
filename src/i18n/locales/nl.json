@@ -88,6 +88,9 @@
         "recipeNameRequired": "Receptnaam is verplicht",
         "itemNameRequired": "Productnaam is verplicht"
     },
+    "changelog": {
+        "title": "Wat is er nieuw"
+    },
     "messages": {
         "recipeAdded": "\"{{name}}\" succesvol toegevoegd!",
         "recipeUpdated": "\"{{name}}\" succesvol bijgewerkt!",

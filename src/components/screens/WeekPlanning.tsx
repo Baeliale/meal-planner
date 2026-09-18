@@ -155,7 +155,7 @@ export const WeekPlanning = () => {
                                 <Text style={cls('subTitle')}>{t(`planning.${day}`)}</Text>
                                 <>
                                     {assignedRecipe && (
-                                        <Text style={cls('listItemText')}>
+                                        <Text style={cls('listItemText')} numberOfLines={1}>
                                             {assignedRecipe.name}
                                         </Text>
                                     )}

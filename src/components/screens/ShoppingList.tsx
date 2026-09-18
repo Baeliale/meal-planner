@@ -297,6 +297,7 @@ export const ShoppingList = () => {
                                                     cls('subTitle'),
                                                     { flex: 1, marginBlockEnd: 0 },
                                                 ]}
+                                                numberOfLines={1}
                                             >
                                                 {formatItemDisplay(item)}
                                             </Text>
@@ -345,7 +346,7 @@ export const ShoppingList = () => {
                                                 checked={item.checked}
                                                 onToggle={() => toggleShoppingListItem(item.id)}
                                             />
-                                            <Text style={cls('subTitle')}>
+                                            <Text style={cls('subTitle')} numberOfLines={1}>
                                                 {formatItemDisplay(item)}
                                             </Text>
                                         </View>

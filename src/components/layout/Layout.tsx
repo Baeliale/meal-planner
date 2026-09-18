@@ -8,6 +8,7 @@ import { TopBar } from './TopBar';
 import { SwipeableScreen } from './SwipeableScreen';
 import { ShoppingList } from '../screens/ShoppingList';
 import { UpdateNotice } from '../parts/UpdateNotice';
+import { ChangelogModal } from '../parts/ChangelogModal';
 import { useRecipes } from '../../providers/RecipeProvider';
 
 const screens = ['planning', 'recipes', 'shopping'] as const;
@@ -65,6 +66,7 @@ export const Layout = () => {
         <View style={cls('app')}>
             <TopBar />
             <UpdateNotice />
+            <ChangelogModal />
             <SwipeableScreen
                 onSwipeLeft={handleSwipeLeft}
                 onSwipeRight={handleSwipeRight}

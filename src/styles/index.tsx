@@ -57,11 +57,16 @@ export const styles = StyleSheet.create({
         width: '100%',
         height: 90,
         paddingBlockStart: 30,
+        paddingInline: 16,
         backgroundColor: colors.primary,
+        flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'space-between',
         boxShadow: '0px 1px 3px rgba(0, 0, 0, 0.25)',
         elevation: 4,
+    },
+    topBarSide: {
+        flex: 1,
     },
     mainArea: {
         width: '100%',
@@ -78,6 +83,7 @@ export const styles = StyleSheet.create({
     logo: {
         height: 30,
         maxWidth: 200,
+        flexShrink: 1,
         resizeMode: 'contain',
     },
     title: {
@@ -299,7 +305,7 @@ export const styles = StyleSheet.create({
     modalHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'center',
+        alignItems: 'flex-start',
         padding: 20,
         borderBottomWidth: 1,
         borderBottomColor: colors.border.light,
@@ -425,9 +431,9 @@ export const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     languageSwitcher: {
-        position: 'absolute',
-        bottom: 10,
-        right: 20,
+        flexDirection: 'row',
+        justifyContent: 'flex-end',
+        gap: 8,
     },
     languageButton: {
         padding: 4,

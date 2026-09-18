@@ -43,7 +43,9 @@ export const AlertModal = ({
                 <View style={[cls('modalContent'), { maxWidth: '100%', maxHeight: 'auto' }]}>
                     {/* Title */}
                     <View style={cls('modalHeader')}>
-                        <Text style={cls('title')}>{title}</Text>
+                        <Text style={[cls('title'), { flex: 1, marginInlineEnd: 10 }]}>
+                            {title}
+                        </Text>
                         <View style={cls('modalHeaderButtons')}>
                             <Button
                                 variant="transparent"

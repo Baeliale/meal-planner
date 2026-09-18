@@ -148,7 +148,7 @@ export const RecipeModal = ({ recipe, visible, onClose }: RecipeModalProps) => {
                 <View style={cls('modalContent')}>
                     {/* Header */}
                     <View style={cls('modalHeader')}>
-                        <Text style={cls('title')}>
+                        <Text style={[cls('title'), { flex: 1, marginInlineEnd: 10 }]}>
                             {isEditing ? t('recipes.editRecipe') : currentRecipe.name}
                         </Text>
                         <View style={cls('modalHeaderButtons')}>

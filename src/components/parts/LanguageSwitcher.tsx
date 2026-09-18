@@ -12,7 +12,7 @@ export const LanguageSwitcher = () => {
   };
 
   return (
-    <View style={[cls('languageSwitcher'), { flexDirection: 'row', gap: 8 }]}>
+    <View style={cls('languageSwitcher')}>
       <Pressable
         onPress={() => changeLanguage('en')}
         style={[
