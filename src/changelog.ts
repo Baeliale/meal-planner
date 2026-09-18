@@ -10,6 +10,17 @@ export interface ChangelogEntry {
 
 export const changelog: ChangelogEntry[] = [
     {
+        id: '2.1.0-changelog-and-layout',
+        version: '2.1.0',
+        date: '2026-09-19',
+        items: [
+            "This \"What's New\" popup - shows what changed after an update, whether it came through automatically or as a full reinstall",
+            'Fixed the logo and language switcher overlapping on narrow phone screens',
+            'Fixed long recipe/item names overlapping their action buttons on narrow phone screens',
+            'Updates now apply as soon as they finish downloading, instead of needing the app to be reopened twice',
+        ],
+    },
+    {
         id: '2.1.0-ux-fixes',
         version: '2.1.0',
         date: '2026-09-19',
