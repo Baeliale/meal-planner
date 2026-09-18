@@ -7,6 +7,7 @@ interface InputProps extends Omit<TextInputProps, 'style' | 'children'> {
     style?: ViewStyle | ViewStyle[];
     label?: string;
     noMargin?: boolean;
+    error?: string;
 }
 
 export const Input = ({
@@ -16,6 +17,7 @@ export const Input = ({
     noMargin = false,
     multiline,
     numberOfLines,
+    error,
     ...props
 }: InputProps) => {
     const { cls } = useTheme();
@@ -26,7 +28,7 @@ export const Input = ({
     //@ts-ignore
     const input = (
         <TextInput
-            style={[cls(`${baseStyle} ${marginStyle}`), style]}
+            style={[cls(`${baseStyle} ${marginStyle}`), error ? cls('inputError') : null, style]}
             multiline={type === 'textarea' ? true : multiline}
             numberOfLines={type === 'textarea' ? numberOfLines || 4 : numberOfLines}
             placeholderTextColor={cls('text').color}
@@ -34,14 +36,22 @@ export const Input = ({
         />
     );
 
+    const errorText = <>{error && <Text style={cls('errorText')}>{error}</Text>}</>;
+
     if (label) {
         return (
             <View style={cls('columns')}>
                 <Text style={cls('label')}>{label}</Text>
                 <>{input}</>
+                {errorText}
             </View>
         );
     }
 
-    return input;
+    return (
+        <>
+            {input}
+            {errorText}
+        </>
+    );
 };

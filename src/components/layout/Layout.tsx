@@ -1,6 +1,6 @@
 import { ScrollView, Text, View } from 'react-native';
 import { ToolBar } from './ToolBar';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTheme } from '../../providers/ThemeProvider';
 import { RecipeList } from '../screens/RecipeList';
 import { WeekPlanning } from '../screens/WeekPlanning';
@@ -8,6 +8,7 @@ import { TopBar } from './TopBar';
 import { SwipeableScreen } from './SwipeableScreen';
 import { ShoppingList } from '../screens/ShoppingList';
 import { UpdateNotice } from '../parts/UpdateNotice';
+import { useRecipes } from '../../providers/RecipeProvider';
 
 const screens = ['planning', 'recipes', 'shopping'] as const;
 
@@ -16,6 +17,20 @@ export type Screen = (typeof screens)[number];
 export const Layout = () => {
     const [activeView, setActiveView] = useState<Screen>('planning');
     const { cls } = useTheme();
+    const { recipes, isLoading } = useRecipes();
+
+    // First-time users have no recipes yet, so Week Planning (the default)
+    // is a dead end - send them to the Recipe List instead. Only steers
+    // navigation once, right after the initial load finishes.
+    const [hasSteeredFirstTimeUser, setHasSteeredFirstTimeUser] = useState(false);
+    useEffect(() => {
+        if (!isLoading && !hasSteeredFirstTimeUser) {
+            if (recipes.length === 0) {
+                setActiveView('recipes');
+            }
+            setHasSteeredFirstTimeUser(true);
+        }
+    }, [isLoading, recipes.length, hasSteeredFirstTimeUser]);
 
     const currentIndex = screens.indexOf(activeView);
 

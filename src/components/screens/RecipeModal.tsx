@@ -8,7 +8,6 @@ import { useTranslation } from 'react-i18next';
 import { useRecipes } from '../../providers/RecipeProvider';
 import { Text } from '../parts/Text';
 import { Checkbox } from '../parts/Checkbox';
-import { useAlert } from '../../providers/AlertProvider';
 
 interface RecipeModalProps {
     recipe: Recipe | null;
@@ -19,7 +18,6 @@ interface RecipeModalProps {
 export const RecipeModal = ({ recipe, visible, onClose }: RecipeModalProps) => {
     const { t } = useTranslation();
     const { cls } = useTheme();
-    const { showAlert } = useAlert();
     const { editRecipe, getRecipeById } = useRecipes();
     const [isEditing, setIsEditing] = useState(false);
 
@@ -29,6 +27,7 @@ export const RecipeModal = ({ recipe, visible, onClose }: RecipeModalProps) => {
     const [ingredients, setIngredients] = useState<Ingredient[]>([
         { name: '', amount: undefined, unit: '', excludeFromShopping: false },
     ]);
+    const [nameError, setNameError] = useState('');
 
     // Get the latest recipe data from the provider
     const currentRecipe = recipe ? getRecipeById(recipe.id) : null;
@@ -44,6 +43,7 @@ export const RecipeModal = ({ recipe, visible, onClose }: RecipeModalProps) => {
             );
             setInstructions(currentRecipe.instructions || '');
             setIsEditing(false);
+            setNameError('');
         }
     }, [currentRecipe?.id, visible]);
 
@@ -74,10 +74,7 @@ export const RecipeModal = ({ recipe, visible, onClose }: RecipeModalProps) => {
 
     const handleSave = async () => {
         if (!name.trim()) {
-            showAlert({
-                title: t('alerts.error'),
-                message: t('alerts.recipeNameRequired'),
-            });
+            setNameError(t('alerts.recipeNameRequired'));
             return;
         }
 
@@ -112,6 +109,7 @@ export const RecipeModal = ({ recipe, visible, onClose }: RecipeModalProps) => {
             );
             setInstructions(currentRecipe.instructions || '');
         }
+        setNameError('');
         setIsEditing(false);
     };
 
@@ -183,13 +181,15 @@ export const RecipeModal = ({ recipe, visible, onClose }: RecipeModalProps) => {
                             {isEditing ? (
                                 /* Edit Form */
                                 <View>
-                                    <Text style={cls('label marginTop')}>
-                                        {t('recipes.recipeName')}
-                                    </Text>
                                     <Input
-                                        placeholder={`${t('recipes.recipeName')} *`}
+                                        label={`${t('recipes.recipeName')} *`}
                                         value={name}
-                                        onChangeText={setName}
+                                        onChangeText={value => {
+                                            setName(value);
+                                            if (nameError) setNameError('');
+                                        }}
+                                        error={nameError}
+                                        style={cls('marginTop')}
                                     />
 
                                     <Text style={cls('label')}>{t('recipes.ingredients')}</Text>
@@ -204,7 +204,7 @@ export const RecipeModal = ({ recipe, visible, onClose }: RecipeModalProps) => {
                                                     <View style={{ flex: 1, gap: 8 }}>
                                                         {/* Row 1: Ingredient name (full width) */}
                                                         <Input
-                                                            placeholder={`${t('recipes.ingredientName')} *`}
+                                                            placeholder={t('recipes.ingredientName')}
                                                             value={ingredient.name}
                                                             onChangeText={value =>
                                                                 handleIngredientChange(
@@ -350,6 +350,20 @@ export const RecipeModal = ({ recipe, visible, onClose }: RecipeModalProps) => {
                                                                     style={cls('modalBullet')}
                                                                 >
                                                                     • {formatIngredient(ingredient)}
+                                                                    <>
+                                                                        {ingredient.excludeFromShopping && (
+                                                                            <Text
+                                                                                style={cls(
+                                                                                    'modalBulletNote'
+                                                                                )}
+                                                                            >
+                                                                                {' '}
+                                                                                {t(
+                                                                                    'recipes.excludedFromShoppingTag'
+                                                                                )}
+                                                                            </Text>
+                                                                        )}
+                                                                    </>
                                                                 </Text>
                                                             )
                                                         )}

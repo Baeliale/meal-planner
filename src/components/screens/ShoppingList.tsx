@@ -33,18 +33,17 @@ export const ShoppingList = () => {
     const [newItemName, setNewItemName] = useState('');
     const [newItemAmount, setNewItemAmount] = useState('');
     const [newItemUnit, setNewItemUnit] = useState('');
+    const [newItemNameError, setNewItemNameError] = useState('');
 
     // Edit form state
     const [editName, setEditName] = useState('');
     const [editAmount, setEditAmount] = useState('');
     const [editUnit, setEditUnit] = useState('');
+    const [editNameError, setEditNameError] = useState('');
 
     const handleAddItem = async () => {
         if (!newItemName.trim()) {
-            showAlert({
-                title: t('alerts.error'),
-                message: t('alerts.itemNameRequired'),
-            });
+            setNewItemNameError(t('alerts.itemNameRequired'));
             return;
         }
 
@@ -59,6 +58,7 @@ export const ShoppingList = () => {
         setNewItemName('');
         setNewItemAmount('');
         setNewItemUnit('');
+        setNewItemNameError('');
         setShowAddForm(false);
     };
 
@@ -66,7 +66,18 @@ export const ShoppingList = () => {
         setNewItemName('');
         setNewItemAmount('');
         setNewItemUnit('');
+        setNewItemNameError('');
         setShowAddForm(false);
+    };
+
+    const handleToggleAddForm = () => {
+        // Closing the form should always discard the draft, same as Cancel -
+        // otherwise leftover text can silently reappear next time it's opened.
+        if (showAddForm) {
+            handleCancelAdd();
+        } else {
+            setShowAddForm(true);
+        }
     };
 
     const handleStartEdit = (item: ShoppingListItem) => {
@@ -74,14 +85,12 @@ export const ShoppingList = () => {
         setEditName(item.name);
         setEditAmount(item.amount?.toString() || '');
         setEditUnit(item.unit || '');
+        setEditNameError('');
     };
 
     const handleSaveEdit = async (itemId: string) => {
         if (!editName.trim()) {
-            showAlert({
-                title: t('alerts.error'),
-                message: t('alerts.itemNameRequired'),
-            });
+            setEditNameError(t('alerts.itemNameRequired'));
             return;
         }
 
@@ -103,6 +112,7 @@ export const ShoppingList = () => {
         setEditName('');
         setEditAmount('');
         setEditUnit('');
+        setEditNameError('');
     };
 
     const handleDeleteItem = (itemId: string, itemName: string) => {
@@ -155,16 +165,18 @@ export const ShoppingList = () => {
     };
 
     const formatItemDisplay = (item: ShoppingListItem): string => {
-        const parts: string[] = [];
-
-        parts.push(item.name);
+        const parts: string[] = [item.name];
 
         if (item.amount !== undefined) {
-            parts.push(item.amount.toString());
-        }
-
-        if (item.unit) {
-            parts.push(item.unit);
+            if (item.unit) {
+                // A measured quantity (e.g. "500 g") - always worth showing.
+                parts.push(item.amount.toString(), item.unit);
+            } else if (item.amount > 1) {
+                // No unit means this is a tally of how many recipes need it,
+                // not a measurement - "x2" reads as a count, a bare "2" doesn't.
+                parts.push(`x${item.amount}`);
+            }
+            // amount === 1 with no unit adds no real information, so it's omitted.
         }
 
         return parts.join(' ');
@@ -236,7 +248,11 @@ export const ShoppingList = () => {
                                                     <Input
                                                         placeholder={`${t('shopping.itemName')} *`}
                                                         value={editName}
-                                                        onChangeText={setEditName}
+                                                        onChangeText={value => {
+                                                            setEditName(value);
+                                                            if (editNameError) setEditNameError('');
+                                                        }}
+                                                        error={editNameError}
                                                     />
                                                 </View>
                                                 <View style={{ flex: 1 }}>
@@ -351,7 +367,11 @@ export const ShoppingList = () => {
                                     <Input
                                         placeholder={`${t('shopping.itemName')} *`}
                                         value={newItemName}
-                                        onChangeText={setNewItemName}
+                                        onChangeText={value => {
+                                            setNewItemName(value);
+                                            if (newItemNameError) setNewItemNameError('');
+                                        }}
+                                        error={newItemNameError}
                                     />
                                 </View>
                                 <View style={{ flex: 1 }}>
@@ -396,7 +416,7 @@ export const ShoppingList = () => {
                     label={showAddForm ? t('shopping.closeForm') : t('shopping.addItem')}
                     variant={showAddForm ? 'secondary' : 'primary'}
                     type="text"
-                    onPress={() => setShowAddForm(!showAddForm)}
+                    onPress={handleToggleAddForm}
                 />
             </View>
         </View>

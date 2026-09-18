@@ -16,7 +16,8 @@
         "remove": "Verwijderen",
         "ok": "OK",
         "updateAvailable": "Update {{version}} is beschikbaar - tik om te bekijken",
-        "dismiss": "Sluiten"
+        "dismiss": "Sluiten",
+        "noItemsAvailable": "Geen items beschikbaar"
     },
     "screens": {
         "recipeList": "Receptenlijst",
@@ -27,7 +28,6 @@
         "title": "Receptenlijst",
         "addRecipe": "Recept Toevoegen",
         "editRecipe": "Recept Bewerken",
-        "viewRecipe": "Recept Bekijken",
         "deleteRecipe": "Recept Verwijderen",
         "recipeName": "Receptnaam",
         "ingredients": "Ingrediënten",
@@ -44,7 +44,9 @@
         "saveChanges": "Wijzigingen Opslaan",
         "closeForm": "Formulier Sluiten",
         "addToWeekday": "Toevoegen aan dag",
-        "selectDayForDish": "Selecteer een dag om dit gerecht aan toe te voegen:"
+        "selectDayForDish": "Selecteer een dag om dit gerecht aan toe te voegen:",
+        "noRecipesForPicker": "Nog geen recepten - voeg er eerst een toe via de Receptenlijst",
+        "excludedFromShoppingTag": "(niet op boodschappenlijst)"
     },
     "planning": {
         "title": "Weekplanning",
@@ -52,6 +54,7 @@
         "clearAll": "Alles Wissen",
         "clearWeek": "Week Wissen",
         "setDish": "Gerecht Instellen",
+        "changeDish": "Gerecht Wijzigen",
         "clearDish": "Gerecht Wissen",
         "selectDish": "Selecteer een gerecht...",
         "selectDay": "Selecteer een dag...",
@@ -81,7 +84,6 @@
         "confirmGenerate": "Dit vervangt je huidige boodschappenlijst. Doorgaan?"
     },
     "alerts": {
-        "error": "Fout",
         "success": "Succes",
         "recipeNameRequired": "Receptnaam is verplicht",
         "itemNameRequired": "Productnaam is verplicht"

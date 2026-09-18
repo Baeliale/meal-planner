@@ -11,6 +11,7 @@ interface ItemPickerProps {
     selectedValue: string;
     emptyLabel?: string;
     label?: string;
+    noItemsLabel?: string;
 }
 
 export const ItemPicker = ({
@@ -19,6 +20,7 @@ export const ItemPicker = ({
     selectedValue,
     emptyLabel,
     label,
+    noItemsLabel,
 }: ItemPickerProps) => {
     const { t } = useTranslation();
     const { cls, theme } = useTheme();
@@ -42,17 +44,23 @@ export const ItemPicker = ({
                 {showDropdown && (
                     <ScrollView style={cls('pickerDropdown')} nestedScrollEnabled>
                         <>
-                            {items.map(item => (
-                                <Pressable
-                                    key={item.value}
-                                    style={cls(
-                                        `pickerItem${item.value === selectedValue ? ' pickerItemSelected' : ''}`
-                                    )}
-                                    onPress={() => onSelect(item.value)}
-                                >
-                                    <Text>{item.label}</Text>
-                                </Pressable>
-                            ))}
+                            {items.length === 0 ? (
+                                <Text style={cls('pickerEmptyText')}>
+                                    {noItemsLabel ?? t('common.noItemsAvailable')}
+                                </Text>
+                            ) : (
+                                items.map(item => (
+                                    <Pressable
+                                        key={item.value}
+                                        style={cls(
+                                            `pickerItem${item.value === selectedValue ? ' pickerItemSelected' : ''}`
+                                        )}
+                                        onPress={() => onSelect(item.value)}
+                                    >
+                                        <Text>{item.label}</Text>
+                                    </Pressable>
+                                ))
+                            )}
                         </>
                     </ScrollView>
                 )}

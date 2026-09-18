@@ -1,4 +1,4 @@
-import { View } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useRecipes, WeekDay } from '../../providers/RecipeProvider';
@@ -43,6 +43,7 @@ export const RecipeList = () => {
     const [ingredients, setIngredients] = useState<Ingredient[]>([
         { name: '', amount: undefined, unit: '', excludeFromShopping: false },
     ]);
+    const [nameError, setNameError] = useState('');
 
     // Search and filter recipes
     const filteredRecipes = useMemo(() => {
@@ -106,10 +107,7 @@ export const RecipeList = () => {
 
     const handleSubmit = async () => {
         if (!name.trim()) {
-            showAlert({
-                title: t('alerts.error'),
-                message: t('alerts.recipeNameRequired'),
-            });
+            setNameError(t('alerts.recipeNameRequired'));
             return;
         }
 
@@ -131,6 +129,7 @@ export const RecipeList = () => {
         setName('');
         setIngredients([{ name: '', amount: undefined, unit: '', excludeFromShopping: false }]);
         setInstructions('');
+        setNameError('');
         setShowForm(false);
     };
 
@@ -139,7 +138,18 @@ export const RecipeList = () => {
         setName('');
         setIngredients([{ name: '', amount: undefined, unit: '', excludeFromShopping: false }]);
         setInstructions('');
+        setNameError('');
         setShowForm(false);
+    };
+
+    const handleToggleForm = () => {
+        // Closing the form should always discard the draft, same as Cancel -
+        // otherwise leftover text can silently reappear next time it's opened.
+        if (showForm) {
+            handleCancel();
+        } else {
+            setShowForm(true);
+        }
     };
 
     const handleViewRecipe = (recipe: Recipe) => {
@@ -231,7 +241,21 @@ export const RecipeList = () => {
                                 return (
                                     <ListItem key={recipe.id}>
                                         <View style={cls('columns')}>
-                                            <Text style={cls('subTitle')}>{recipe.name}</Text>
+                                            <>
+                                                {isSelectingDay ? (
+                                                    <Text style={cls('subTitle')}>
+                                                        {recipe.name}
+                                                    </Text>
+                                                ) : (
+                                                    <Pressable
+                                                        onPress={() => handleViewRecipe(recipe)}
+                                                    >
+                                                        <Text style={cls('subTitle')}>
+                                                            {recipe.name}
+                                                        </Text>
+                                                    </Pressable>
+                                                )}
+                                            </>
 
                                             {/* Day Picker */}
                                             <>
@@ -272,6 +296,7 @@ export const RecipeList = () => {
                                                     <SlideMenu
                                                         open={openMenus.includes(recipe.id)}
                                                         setOpen={() => toggleItemMenu(recipe.id)}
+                                                        slideWidth={130}
                                                     >
                                                         <Button
                                                             label={t('recipes.addToWeekday')}
@@ -282,14 +307,6 @@ export const RecipeList = () => {
                                                             onPress={() =>
                                                                 handleShowDayPicker(recipe.id)
                                                             }
-                                                        />
-                                                        <Button
-                                                            label={t('recipes.viewRecipe')}
-                                                            variant="primary"
-                                                            type="icon"
-                                                            iconName="visibility"
-                                                            iconSource="materialIcons"
-                                                            onPress={() => handleViewRecipe(recipe)}
                                                         />
                                                         <Button
                                                             label={t('recipes.deleteRecipe')}
@@ -320,10 +337,13 @@ export const RecipeList = () => {
                         <Text style={cls('subTitle')}>{t('recipes.addRecipe')}</Text>
 
                         <Input
-                            label={t('recipes.recipeName')}
-                            placeholder={`${t('recipes.recipeName')} *`}
+                            label={`${t('recipes.recipeName')} *`}
                             value={name}
-                            onChangeText={setName}
+                            onChangeText={value => {
+                                setName(value);
+                                if (nameError) setNameError('');
+                            }}
+                            error={nameError}
                             style={cls('marginTop')}
                         />
 
@@ -339,7 +359,7 @@ export const RecipeList = () => {
                                         <View style={{ flex: 1, gap: 8 }}>
                                             {/* Row 1: Ingredient name (full width) */}
                                             <Input
-                                                placeholder={`${t('recipes.ingredientName')} *`}
+                                                placeholder={t('recipes.ingredientName')}
                                                 value={ingredient.name}
                                                 onChangeText={value =>
                                                     handleIngredientChange(index, 'name', value)
@@ -454,7 +474,7 @@ export const RecipeList = () => {
                     label={showForm ? t('recipes.closeForm') : t('recipes.addRecipe')}
                     variant={showForm ? 'secondary' : 'primary'}
                     type="text"
-                    onPress={() => setShowForm(!showForm)}
+                    onPress={handleToggleForm}
                 />
             </View>
 

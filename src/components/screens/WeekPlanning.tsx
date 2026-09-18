@@ -38,9 +38,9 @@ export const WeekPlanning = () => {
         'sunday',
     ];
 
-    const handleSetDish = (day: WeekDay) => {
+    const handleSetDish = (day: WeekDay, currentRecipeId?: string) => {
         setSelectedDay(day);
-        setSelectedRecipeId('');
+        setSelectedRecipeId(currentRecipeId ?? '');
     };
 
     const handleSelectRecipe = async (day: WeekDay, recipeId: string) => {
@@ -178,6 +178,7 @@ export const WeekPlanning = () => {
                                                     }
                                                 }}
                                                 emptyLabel={t('planning.selectDish')}
+                                                noItemsLabel={t('recipes.noRecipesForPicker')}
                                             />
                                             <Button
                                                 variant={'secondary'}
@@ -191,7 +192,21 @@ export const WeekPlanning = () => {
 
                             <>
                                 {!isSelectingForThisDay && (
-                                    <View>
+                                    <View style={cls('rows')}>
+                                        <>
+                                            {assignedRecipe && (
+                                                <Button
+                                                    label={t('planning.changeDish')}
+                                                    variant={'primary'}
+                                                    type={'icon'}
+                                                    iconSource={'materialIcons'}
+                                                    iconName={'edit'}
+                                                    onPress={() =>
+                                                        handleSetDish(day, assignedRecipe.id)
+                                                    }
+                                                />
+                                            )}
+                                        </>
                                         <>
                                             {assignedRecipe ? (
                                                 <Button

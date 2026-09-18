@@ -46,7 +46,7 @@ export const SlideMenu = ({ open, setOpen, children, slideWidth }: SlideMenuProp
                     label={t('common.moreActions')}
                     variant="transparent"
                     type="icon"
-                    iconName="settings"
+                    iconName="more-vert"
                     iconSource="materialIcons"
                     onPress={setOpen}
                 />

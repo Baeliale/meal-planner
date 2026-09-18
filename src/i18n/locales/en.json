@@ -16,7 +16,8 @@
         "remove": "Remove",
         "ok": "OK",
         "updateAvailable": "Update {{version}} is available - tap to view",
-        "dismiss": "Dismiss"
+        "dismiss": "Dismiss",
+        "noItemsAvailable": "No items available"
     },
     "screens": {
         "recipeList": "Recipe List",
@@ -27,7 +28,6 @@
         "title": "Recipe List",
         "addRecipe": "Add Recipe",
         "editRecipe": "Edit Recipe",
-        "viewRecipe": "View Recipe",
         "deleteRecipe": "Delete Recipe",
         "recipeName": "Recipe Name",
         "ingredients": "Ingredients",
@@ -44,7 +44,9 @@
         "saveChanges": "Save Changes",
         "closeForm": "Close Form",
         "addToWeekday": "Add to weekday",
-        "selectDayForDish": "Select a day to add this dish to:"
+        "selectDayForDish": "Select a day to add this dish to:",
+        "noRecipesForPicker": "No recipes yet - add one in the Recipe List first",
+        "excludedFromShoppingTag": "(not on shopping list)"
     },
     "planning": {
         "title": "Week Planning",
@@ -52,6 +54,7 @@
         "clearAll": "Clear All",
         "clearWeek": "Clear Week",
         "setDish": "Set Dish",
+        "changeDish": "Change Dish",
         "clearDish": "Clear Dish",
         "selectDish": "Select a dish...",
         "selectDay": "Select a day...",
@@ -81,7 +84,6 @@
         "confirmGenerate": "This will replace your current shopping list. Continue?"
     },
     "alerts": {
-        "error": "Error",
         "success": "Success",
         "recipeNameRequired": "Recipe name is required",
         "itemNameRequired": "Item name is required"

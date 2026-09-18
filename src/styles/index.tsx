@@ -186,6 +186,16 @@ export const styles = StyleSheet.create({
         padding: 10,
         fontSize: 16,
     },
+    inputError: {
+        borderColor: colors.error,
+        borderWidth: 2,
+    },
+    errorText: {
+        color: colors.error,
+        fontSize: 13,
+        marginBlockStart: 4,
+        marginBlockEnd: 8,
+    },
     textArea: {
         backgroundColor: colors.surface2.light,
         borderWidth: 1,
@@ -236,6 +246,10 @@ export const styles = StyleSheet.create({
     },
     pickerItem: {
         paddingBlock: 8,
+    },
+    pickerEmptyText: {
+        paddingBlock: 12,
+        opacity: 0.7,
     },
     rows: {
         flexDirection: 'row',
@@ -312,6 +326,10 @@ export const styles = StyleSheet.create({
         marginVertical: 4,
         paddingLeft: 10,
         color: colors.textPrimary.light,
+    },
+    modalBulletNote: {
+        fontStyle: 'italic',
+        opacity: 0.7,
     },
     slideMenu: {
         width: 40,
